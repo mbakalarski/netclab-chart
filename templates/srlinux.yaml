@@ -1,0 +1,78 @@
+{{- $root := . }}
+
+{{- $srlinux_default_img := "ghcr.io/nokia/srlinux:latest" }}
+{{- $srlinux_default_memory := "4Gi" }}
+{{- $srlinux_default_cpu := "2000m" }}
+
+
+{{- range $i, $ := .Values.topology.nodes }}
+{{- if eq .type "srlinux" }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .name }}
+  annotations:
+    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    k8s.v1.cni.cncf.io/networks:
+    {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
+  labels:
+    vendor: nokia
+{{ include "netclab.labels" $root | indent 4 }}
+spec:
+  containers:
+  - name: {{ .name }}
+    image: {{ default $srlinux_default_img .image }}
+    command:
+    - /tini
+    - --
+    - fixuid
+    - -q
+    - /entrypoint.sh
+    args:
+    - sudo
+    - bash
+    - -c
+    - /opt/srlinux/bin/sr_linux
+    securityContext:
+      privileged: true
+      runAsUser: 0
+      runAsGroup: 0
+    resources:
+      limits:
+        memory: {{ default $srlinux_default_memory .memory }}
+        cpu: {{ default $srlinux_default_cpu .cpu }}
+    volumeMounts:
+      - mountPath: /tmp/topology.yml
+        subPath: topology.yml
+        name: hw
+        readOnly: true
+  volumes:
+  - name: hw
+    configMap:
+      name: {{ .name }}-hw
+      defaultMode: 292
+      optional: false
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .name }}-hw
+  labels:
+    vendor: nokia
+{{ include "netclab.labels" $root | indent 4 }}
+data:
+  topology.yml: |-
+    # ixrd1
+    chassis_configuration:
+      "chassis_type": 64
+      "base_mac": 00:01:{{ printf "%02x" $i }}:00:00:00
+      "cpm_card_type": 175
+
+    slot_configuration:
+      1:
+        "card_type": 175
+        "mda_type": 196
+
+{{- end }}
+{{- end }}

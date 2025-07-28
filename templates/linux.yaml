@@ -1,0 +1,39 @@
+{{- $root := . }}
+
+{{- $linux_default_img := "bash:latest" }}
+{{- $linux_default_memory := "200Mi" }}
+{{- $linux_default_cpu := "200m" }}
+
+{{- range $i, $ := .Values.topology.nodes }}
+{{- if eq .type "linux" }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .name }}
+  labels:
+{{ include "netclab.labels" $root | indent 4 }}
+  annotations:
+    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    k8s.v1.cni.cncf.io/networks:
+    {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
+spec:
+  containers:
+  - image: {{ default $linux_default_img .image }}
+    name: {{ .name }}
+    args:
+    - sh
+    - -c
+    - sleep inf
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - NET_RAW
+    resources:
+      limits:
+        cpu: {{ default $linux_default_cpu .cpu }}
+        memory: {{ default $linux_default_memory .memory }}
+
+{{- end }}
+{{- end }}

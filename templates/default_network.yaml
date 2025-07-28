@@ -1,0 +1,36 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: {{ .Values.default_network.name }}
+  namespace: kube-system
+  labels:
+{{ include "netclab.labels" . | indent 4 }}
+spec:
+  config: '{
+      "cniVersion": "0.3.1",
+      "name": "{{ .Values.default_network.name }}",
+      "plugins": [
+        {
+          "type": "bridge",
+          "bridge": "{{ .Values.default_network.name }}",
+          "isGateway": true,
+          "isDefaultGateway": false,
+          "ipam": {
+            "type": "host-local",
+            "ranges": [
+              [
+                {
+                  "subnet": "{{ .Values.default_network.subnet }}",
+                  "gateway": "{{ .Values.default_network.gateway }}"
+                }
+              ]
+            ],
+            "routes": [
+              { "dst": "10.0.0.0/8" },
+              { "dst": "172.16.0.0/12" },
+              { "dst": "192.168.0.0/16" }
+            ]
+          }
+        }
+      ]
+    }'

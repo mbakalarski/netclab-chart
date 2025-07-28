@@ -1,0 +1,99 @@
+
+{{- $root := . }}
+
+{{- $traffic_engine_default_img := "ghcr.io/open-traffic-generator/ixia-c-traffic-engine:latest" }}
+{{- $protocol_engine_default_img := "ghcr.io/open-traffic-generator/ixia-c-protocol-engine:latest" }}
+{{- $ixia_default_memory := "25Mi" }}
+{{- $ixia_default_cpu := "10m" }}
+
+
+{{- $_ := set $ "has_ixia" false }}
+{{- range $i, $node := .Values.topology.nodes }}
+  {{- if eq $node.type "ixia-c" }}
+    {{- $_ := set $ "has_ixia" true }}
+    {{- $_ := set $ "ixia_cnx" $node }}
+  {{- end }}
+{{- end }}
+
+{{- if $.has_ixia }}
+{{- with $.ixia_cnx }}
+{{- range $j, $k := untilStep 1 4 1 }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: otg-port-{{ $k }}
+  annotations:
+    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+  labels:
+    app: ixia-c
+    role: port-{{ $k }}
+{{ include "netclab.labels" $root | indent 4 }}
+spec:
+  containers:
+    - name: traffic-engine-{{ $k }}
+      image: {{ default $traffic_engine_default_img $root.ixia_c_traffic_engine_image }}
+      env:
+        - name: ARG_IFACE_LIST
+          value: virtual@af_packet,eth{{ $k }}
+        - name: OPT_NO_HUGEPAGES
+          value: "Yes"
+        - name: OPT_ADAPTIVE_CPU_USAGE
+          value: "Yes"
+        - name: OPT_LISTEN_PORT
+          value: "5555"
+        - name: ARG_CORE_LIST
+          value: 7 7 7
+        - name: DEFAULT_PORT_SPEED
+          value: "1000"
+        - name: WAIT_FOR_IFACE
+          value: "Yes"
+      securityContext:
+        privileged: true
+      resources:
+        requests:
+          cpu: 200m
+          memory: 60Mi
+        limits:
+          cpu: 500m
+          memory: 120Mi
+    - name: protocol-engine-{{ $k }}
+      image: {{ default $protocol_engine_default_img $root.ixia_c_protocol_engine_image }}
+      env:
+        - name: INTF_LIST
+          value: eth{{ $k }}
+      securityContext:
+        privileged: true
+      resources:
+        requests:
+          cpu: 200m
+          memory: 350Mi
+        limits:
+          cpu: 400m
+          memory: 700Mi
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otg-port-{{ $k }}
+  labels:
+    app: ixia-c
+    role: port-{{ $k }}
+{{ include "netclab.labels" $root | indent 4 }}
+spec:
+  ports:
+    - name: port-5555
+      port: 5555
+      protocol: TCP
+      targetPort: 5555
+    - name: port-50071
+      port: 50071
+      protocol: TCP
+      targetPort: 50071
+  selector:
+    role: port-{{ $k }}
+
+{{- end }}
+{{- end }}
+{{- end }}
