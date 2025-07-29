@@ -31,11 +31,14 @@ jobs:
         chmod +x ./kind
         sudo mv ./kind /usr/local/bin/kind
 
-    - name: install Helm
+    - name: Install Helm
       run: |
         curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
         chmod 700 get_helm.sh
         ./get_helm.sh
+
+    - name: Create k8s cluster
+      run: kind create cluster -n netclab
 
     - name: Check out code
       uses: actions/checkout@v4
