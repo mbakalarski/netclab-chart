@@ -1,0 +1,38 @@
+name: Release Helm Chart on Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🔧 Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.14.0
+
+      - name: 🏗 Package Helm chart
+        run: |
+          mkdir -p .cr-release-packages
+          helm package . --destination .cr-release-packages
+
+      - name: 📦 Generate Helm repo index
+        run: |
+          mkdir -p .cr-index
+          cp .cr-release-packages/*.tgz .cr-index/
+          helm repo index .cr-index --url https://mbakalarski.github.io/netclab-chart --merge https://mbakalarski.github.io/netclab-chart/index.yaml || true
+
+      - name: 🚀 Publish to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: .cr-index
+          force_orphan: false
