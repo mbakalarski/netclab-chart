@@ -49,11 +49,11 @@ jobs:
     # - name: Check pods in k8s
     #   run: kubectl get pod -A
 
-    - name: Install prer
-      run: bash .github/workflows/preflight.sh
-
     - name: Check out code
       uses: actions/checkout@v4
+
+    - name: Install prerequisites
+      run: bash .github/workflows/preflight.sh
 
     # - name: Install netclab-chart
     #   run: |
