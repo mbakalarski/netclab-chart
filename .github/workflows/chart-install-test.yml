@@ -1,0 +1,54 @@
+name: netclab-chart
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+  pull_requests:
+    branches:
+    - main
+
+jobs:
+  deploy-test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Install kind
+      run: |
+        version=$(basename $(curl -s -w %{redirect_url} https://github.com/kubernetes-sigs/kind/releases/latest))
+        [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-amd64
+        [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-arm64
+        chmod +x ./kind
+        sudo mv ./kind /usr/local/bin/kind
+
+    - name: install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Install netclab-chart
+      run: |
+        cat <<EOF > values.yaml
+        topology:
+          default_network:
+            name: b0
+            subnet: 10.10.0.0/24
+            gateway: 10.10.0.254
+          networks:
+          - name: b1
+          nodes:
+          - name: srl01
+            type: srlinux
+            memory: 2Gi
+            cpu: 500m
+            interfaces:
+            - name: e1-1
+              network: b1
+        EOF
+        helm upgrade --install netclab ./netclab-chart --values values.yaml
