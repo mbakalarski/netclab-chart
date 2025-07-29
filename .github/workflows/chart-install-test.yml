@@ -15,63 +15,29 @@ jobs:
 
     steps:
 
-    # - name: Install kubectl
-    #   run: |
-    #     [ $(uname -m) = x86_64 ] && export os="linux/amd64"
-    #     [ $(uname -m) = aarch64 ] && export os="darwin/arm64"
-    #     curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/$os/kubectl"
-    #     chmod +x ./kubectl
-    #     sudo mv ./kubectl /usr/local/bin/kubectl
-
-    # - name: Install kind
-    #   run: |
-    #     version=$(basename $(curl -s -w %{redirect_url} https://github.com/kubernetes-sigs/kind/releases/latest))
-    #     [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-amd64
-    #     [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-arm64
-    #     chmod +x ./kind
-    #     sudo mv ./kind /usr/local/bin/kind
-
-    # - name: Install Helm
-    #   run: |
-    #     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-    #     chmod 700 get_helm.sh
-    #     ./get_helm.sh
-
-    # - name: Create k8s cluster
-    #   run: kind create cluster -n netclab
-
-    # - name: Check k8s config
-    #   run: kubectl config view
-
-    # - name: Install Multus CNI
-    #   run: kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
-
-    # - name: Check pods in k8s
-    #   run: kubectl get pod -A
-
     - name: Check out code
       uses: actions/checkout@v4
 
     - name: Install prerequisites
       run: bash .github/workflows/preflight.sh
 
-    # - name: Install netclab-chart
-    #   run: |
-    #     cat <<EOF > values.yaml
-    #     topology:
-    #       default_network:
-    #         name: b0
-    #         subnet: 10.10.0.0/24
-    #         gateway: 10.10.0.254
-    #       networks:
-    #       - name: b1
-    #       nodes:
-    #       - name: srl01
-    #         type: srlinux
-    #         memory: 2Gi
-    #         cpu: 500m
-    #         interfaces:
-    #         - name: e1-1
-    #           network: b1
-    #     EOF
-    #     helm upgrade --install netclab . --values values.yaml
+    - name: Install netclab-chart
+      run: |
+        cat <<EOF > values.yaml
+        topology:
+          default_network:
+            name: b0
+            subnet: 10.10.0.0/24
+            gateway: 10.10.0.254
+          networks:
+          - name: b1
+          nodes:
+          - name: srl01
+            type: srlinux
+            memory: 2Gi
+            cpu: 500m
+            interfaces:
+            - name: e1-1
+              network: b1
+        EOF
+        helm upgrade --install netclab . --values values.yaml
