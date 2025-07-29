@@ -2,7 +2,7 @@ apiVersion: v2
 name: netclab
 description: Helm chart to deploy a containerized network lab with Ixia-C and virtual routers
 type: application
-version: 0.1.2
+version: 0.1.3
 appVersion: "0.1.0"
 
 maintainers:
