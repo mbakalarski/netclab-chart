@@ -1,15 +1,12 @@
 # netclab-chart
 
-A Helm chart for deploying containerized network topologies with routers and traffic generator, using Multus CNI for multi-interface support.
-
----
-
-## Chart Overview
-
-This chart allows you to deploy lab nodes with support for advanced networking via [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni).
+A Helm chart for deploying containerized network topologies, using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) for multi-interface support.
+<br><br>
+This chart allows you to deploy lab routers, hosts and traffic/protocol generators.
+<br>
 It renders the necessary `ConfigMap`, `Pod`, and `NetworkAttachmentDefinition` objects from structured `values.yaml`.
-
----
+<br><br>
+It can be used for labs, tests, CI.
 
 ## Prerequisites
 
@@ -31,7 +28,7 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 git clone https://github.com/mbakalarski/netclab-chart
 cd netclab-chart
 
-helm install netclab ./ --namespace netclab --create-namespace
+helm install netclab ./ --create-namespace
 ```
 
 ## Configuration
@@ -39,12 +36,11 @@ helm install netclab ./ --namespace netclab --create-namespace
 Edit `values.yaml` to define your network.
 
 ```yaml
-default_network:
-  name: b0
-  subnet: 10.10.0.0/24
-  gateway: 10.10.0.254
-
 topology:
+  default_network:
+    name: b0
+    subnet: 10.10.0.0/24
+    gateway: 10.10.0.254
   networks:
   - name: b1
   - name: b2
@@ -95,16 +91,16 @@ topology:
       network: b4
 ```
 
-## Upgrade or Uninstall
+## Upgrade or Reinstall
 
 To upgrade the release after making changes:
 ```bash
-helm upgrade netclab ./ --namespace netclab
+helm upgrade netclab . --values values.yaml
 ```
 
-To uninstall:
 ```bash
-helm uninstall netclab --namespace netclab
+helm uninstall netclab
+helm upgrade --install netclab . --values values.yaml
 ```
 
 ## Future Plans
@@ -112,6 +108,7 @@ helm uninstall netclab --namespace netclab
 - Replace static Helm templates with dynamic controller logic
 - Define a CRD for Topology to enable programmable lab descriptions
 - Add support for additional containerized router platforms
+- Add Support for multi-node cluster
 
 ## Contributing
 
