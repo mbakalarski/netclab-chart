@@ -10,10 +10,10 @@ It can be used for labs, tests, CI.
 
 ## Prerequisites
 
-Before installing `netclab-chart`, ensure the following are present in your Kubernetes cluster:
+Before installing `netclab-chart`, ensure the following are present:
 
-- Helm v3.x
-- Kubernetes 1.20+
+- Kubernetes
+- Helm
 - [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) installed and running
 
 ### Install Multus CNI (if not already installed)
@@ -97,10 +97,10 @@ To upgrade the release after making changes:
 ```bash
 helm upgrade netclab . --values values.yaml
 ```
-
+or:
 ```bash
 helm uninstall netclab
-helm upgrade --install netclab . --values values.yaml
+helm install netclab . --values values.yaml
 ```
 
 ## Future Plans
