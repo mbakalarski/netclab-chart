@@ -15,39 +15,42 @@ jobs:
 
     steps:
 
-    - name: Install kubectl
-      run: |
-        [ $(uname -m) = x86_64 ] && export os="linux/amd64"
-        [ $(uname -m) = aarch64 ] && export os="darwin/arm64"
-        curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/$os/kubectl"
-        chmod +x ./kubectl
-        sudo mv ./kubectl /usr/local/bin/kubectl
+    # - name: Install kubectl
+    #   run: |
+    #     [ $(uname -m) = x86_64 ] && export os="linux/amd64"
+    #     [ $(uname -m) = aarch64 ] && export os="darwin/arm64"
+    #     curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/$os/kubectl"
+    #     chmod +x ./kubectl
+    #     sudo mv ./kubectl /usr/local/bin/kubectl
 
-    - name: Install kind
-      run: |
-        version=$(basename $(curl -s -w %{redirect_url} https://github.com/kubernetes-sigs/kind/releases/latest))
-        [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-amd64
-        [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-arm64
-        chmod +x ./kind
-        sudo mv ./kind /usr/local/bin/kind
+    # - name: Install kind
+    #   run: |
+    #     version=$(basename $(curl -s -w %{redirect_url} https://github.com/kubernetes-sigs/kind/releases/latest))
+    #     [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-amd64
+    #     [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/${version}/kind-linux-arm64
+    #     chmod +x ./kind
+    #     sudo mv ./kind /usr/local/bin/kind
 
-    - name: Install Helm
-      run: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-        chmod 700 get_helm.sh
-        ./get_helm.sh
+    # - name: Install Helm
+    #   run: |
+    #     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    #     chmod 700 get_helm.sh
+    #     ./get_helm.sh
 
-    - name: Create k8s cluster
-      run: kind create cluster -n netclab
+    # - name: Create k8s cluster
+    #   run: kind create cluster -n netclab
 
-    - name: Check k8s config
-      run: kubectl config view
+    # - name: Check k8s config
+    #   run: kubectl config view
 
-    - name: Install Multus CNI
-      run: kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
+    # - name: Install Multus CNI
+    #   run: kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
 
-    - name: Check pods in k8s
-      run: kubectl get pod -A
+    # - name: Check pods in k8s
+    #   run: kubectl get pod -A
+
+    - name: Install prer
+      run: bash .github/workflows/preflight.sh
 
     - name: Check out code
       uses: actions/checkout@v4
