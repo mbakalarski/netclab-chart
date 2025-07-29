@@ -46,23 +46,23 @@ jobs:
     - name: Check k8s config
       run: kubectl config view
 
-    # - name: Install netclab-chart
-    #   run: |
-    #     cat <<EOF > values.yaml
-    #     topology:
-    #       default_network:
-    #         name: b0
-    #         subnet: 10.10.0.0/24
-    #         gateway: 10.10.0.254
-    #       networks:
-    #       - name: b1
-    #       nodes:
-    #       - name: srl01
-    #         type: srlinux
-    #         memory: 2Gi
-    #         cpu: 500m
-    #         interfaces:
-    #         - name: e1-1
-    #           network: b1
-    #     EOF
-    #     helm upgrade --install netclab ./netclab-chart --values values.yaml
+    - name: Install netclab-chart
+      run: |
+        cat <<EOF > values.yaml
+        topology:
+          default_network:
+            name: b0
+            subnet: 10.10.0.0/24
+            gateway: 10.10.0.254
+          networks:
+          - name: b1
+          nodes:
+          - name: srl01
+            type: srlinux
+            memory: 2Gi
+            cpu: 500m
+            interfaces:
+            - name: e1-1
+              network: b1
+        EOF
+        helm upgrade --install netclab ./netclab-chart --values values.yaml
