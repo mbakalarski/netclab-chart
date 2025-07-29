@@ -16,6 +16,7 @@ sources:
 - https://github.com/nokia/srlinux-container-image
 - https://github.com/mbakalarski/netclab-chart
 - https://github.com/mbakalarski/netclab
+- https://github.com/mbakalarski/netclab-examples
 
 keywords:
 - kind
@@ -30,4 +31,4 @@ keywords:
 - simulation
 - testbed
 
-home: https://github.com/mbakalarski/netclab
+home: https://github.com/mbakalarski
