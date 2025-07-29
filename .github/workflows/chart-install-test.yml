@@ -40,32 +40,35 @@ jobs:
     - name: Create k8s cluster
       run: kind create cluster -n netclab
 
-    - name: Check out code
-      uses: actions/checkout@v4
-
     - name: Check k8s config
       run: kubectl config view
 
     - name: Install Multus CNI
       run: kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
 
-    - name: Install netclab-chart
-      run: |
-        cat <<EOF > values.yaml
-        topology:
-          default_network:
-            name: b0
-            subnet: 10.10.0.0/24
-            gateway: 10.10.0.254
-          networks:
-          - name: b1
-          nodes:
-          - name: srl01
-            type: srlinux
-            memory: 2Gi
-            cpu: 500m
-            interfaces:
-            - name: e1-1
-              network: b1
-        EOF
-        helm upgrade --install netclab . --values values.yaml
+    - name: Check pods in k8s
+      run: kubectl get pod -A
+
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    # - name: Install netclab-chart
+    #   run: |
+    #     cat <<EOF > values.yaml
+    #     topology:
+    #       default_network:
+    #         name: b0
+    #         subnet: 10.10.0.0/24
+    #         gateway: 10.10.0.254
+    #       networks:
+    #       - name: b1
+    #       nodes:
+    #       - name: srl01
+    #         type: srlinux
+    #         memory: 2Gi
+    #         cpu: 500m
+    #         interfaces:
+    #         - name: e1-1
+    #           network: b1
+    #     EOF
+    #     helm upgrade --install netclab . --values values.yaml
