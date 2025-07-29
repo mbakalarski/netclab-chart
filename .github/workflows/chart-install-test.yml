@@ -15,6 +15,14 @@ jobs:
 
     steps:
 
+    - name: Install kubectl
+      run: |
+        [ $(uname -m) = x86_64 ] && export os="linux/amd64"
+        [ $(uname -m) = aarch64 ] && export os="darwin/arm64"
+        curl -LO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/$os/kubectl"
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+
     - name: Install kind
       run: |
         version=$(basename $(curl -s -w %{redirect_url} https://github.com/kubernetes-sigs/kind/releases/latest))
@@ -32,23 +40,26 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
 
-    - name: Install netclab-chart
-      run: |
-        cat <<EOF > values.yaml
-        topology:
-          default_network:
-            name: b0
-            subnet: 10.10.0.0/24
-            gateway: 10.10.0.254
-          networks:
-          - name: b1
-          nodes:
-          - name: srl01
-            type: srlinux
-            memory: 2Gi
-            cpu: 500m
-            interfaces:
-            - name: e1-1
-              network: b1
-        EOF
-        helm upgrade --install netclab ./netclab-chart --values values.yaml
+    - name: Check k8s config
+      run: kubectl config view
+
+    # - name: Install netclab-chart
+    #   run: |
+    #     cat <<EOF > values.yaml
+    #     topology:
+    #       default_network:
+    #         name: b0
+    #         subnet: 10.10.0.0/24
+    #         gateway: 10.10.0.254
+    #       networks:
+    #       - name: b1
+    #       nodes:
+    #       - name: srl01
+    #         type: srlinux
+    #         memory: 2Gi
+    #         cpu: 500m
+    #         interfaces:
+    #         - name: e1-1
+    #           network: b1
+    #     EOF
+    #     helm upgrade --install netclab ./netclab-chart --values values.yaml
