@@ -25,10 +25,10 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 ## Installation
 
 ```bash
-git clone https://github.com/mbakalarski/netclab-chart
-cd netclab-chart
-
-helm install netclab ./ --create-namespace
+helm repo add netclab https://mbakalarski.github.io/netclab-chart
+helm repo update
+helm search repo netclab
+helm install netclab netclab/netclab
 ```
 
 ## Configuration
@@ -95,12 +95,12 @@ topology:
 
 To upgrade the release after making changes:
 ```bash
-helm upgrade netclab . --values values.yaml
+helm upgrade netclab netclab/netclab --values values.yaml
 ```
 or:
 ```bash
 helm uninstall netclab
-helm install netclab . --values values.yaml
+helm install netclab netclab/netclab --values values.yaml
 ```
 
 ## Future Plans
