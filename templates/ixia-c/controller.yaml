@@ -13,12 +13,14 @@ kind: Pod
 metadata:
   name: otg-controller
   annotations:
-    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
   labels:
     app: ixia-c
     role: controller
 {{ include "netclab.labels" $root | indent 4 }}
 spec:
+  affinity:
+{{ include "netclab.podAffinity" $root | indent 4 }}
   containers:
     - name: otg-controller
       image: {{ default $ixia_default_img1 .image1 }}

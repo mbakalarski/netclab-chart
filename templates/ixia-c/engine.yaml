@@ -24,12 +24,14 @@ kind: Pod
 metadata:
   name: otg-port-{{ $k }}
   annotations:
-    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
   labels:
     app: ixia-c
     role: port-{{ $k }}
 {{ include "netclab.labels" $root | indent 4 }}
 spec:
+  affinity:
+{{ include "netclab.podAffinity" $root | indent 4 }}
   containers:
     - name: traffic-engine-{{ $k }}
       image: {{ default $traffic_engine_default_img $root.ixia_c_traffic_engine_image }}

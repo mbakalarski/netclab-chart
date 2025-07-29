@@ -1,3 +1,4 @@
+{{- if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1" }}
 {{- $root := . }}
 {{- range .Values.topology.networks }}
 ---
@@ -19,4 +20,7 @@ spec:
         }
       ]
     }'
+{{- end }}
+{{- else }}
+{{ fail "❌ Multus CNI CRD (k8s.cni.cncf.io/v1) not found. Install Multus before proceeding." }}
 {{- end }}

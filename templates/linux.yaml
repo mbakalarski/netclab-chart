@@ -14,10 +14,12 @@ metadata:
   labels:
 {{ include "netclab.labels" $root | indent 4 }}
   annotations:
-    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
     k8s.v1.cni.cncf.io/networks:
     {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
 spec:
+  affinity:
+{{ include "netclab.podAffinity" $root | indent 4 }}
   containers:
   - image: {{ default $linux_default_img .image }}
     name: {{ .name }}

@@ -13,13 +13,15 @@ kind: Pod
 metadata:
   name: {{ .name }}
   annotations:
-    v1.multus-cni.io/default-network: {{ $root.Values.default_network.name }}
+    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
     k8s.v1.cni.cncf.io/networks:
     {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
   labels:
     vendor: nokia
 {{ include "netclab.labels" $root | indent 4 }}
 spec:
+  affinity:
+{{ include "netclab.podAffinity" $root | indent 4 }}
   containers:
   - name: {{ .name }}
     image: {{ default $srlinux_default_img .image }}

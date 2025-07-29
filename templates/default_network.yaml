@@ -1,18 +1,19 @@
+{{- if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1" }}
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: {{ .Values.default_network.name }}
+  name: {{ .Values.topology.default_network.name }}
   namespace: kube-system
   labels:
 {{ include "netclab.labels" . | indent 4 }}
 spec:
   config: '{
       "cniVersion": "0.3.1",
-      "name": "{{ .Values.default_network.name }}",
+      "name": "{{ .Values.topology.default_network.name }}",
       "plugins": [
         {
           "type": "bridge",
-          "bridge": "{{ .Values.default_network.name }}",
+          "bridge": "{{ .Values.topology.default_network.name }}",
           "isGateway": true,
           "isDefaultGateway": false,
           "ipam": {
@@ -20,8 +21,8 @@ spec:
             "ranges": [
               [
                 {
-                  "subnet": "{{ .Values.default_network.subnet }}",
-                  "gateway": "{{ .Values.default_network.gateway }}"
+                  "subnet": "{{ .Values.topology.default_network.subnet }}",
+                  "gateway": "{{ .Values.topology.default_network.gateway }}"
                 }
               ]
             ],
@@ -34,3 +35,6 @@ spec:
         }
       ]
     }'
+{{- else }}
+{{ fail "❌ Multus CNI CRD (k8s.cni.cncf.io/v1) not found. Install Multus before proceeding." }}
+{{- end }}
