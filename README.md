@@ -25,6 +25,7 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 ## Installation
 
 ```bash
+helm search hub netclab --list-repo-url
 helm repo add netclab https://mbakalarski.github.io/netclab-chart
 helm repo update
 helm search repo netclab
