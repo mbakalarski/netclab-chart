@@ -1,20 +1,21 @@
 # netclab-chart
 
-A Helm chart for deploying containerized network topologies, using [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) for multi-interface support.
-<br><br>
-This chart allows you to deploy lab routers, hosts and traffic/protocol generators.
-<br>
-It renders the necessary `ConfigMap`, `Pod`, and `NetworkAttachmentDefinition` objects from structured `values.yaml`.
-<br><br>
-It can be used for labs, tests, CI.
+**netclab** is a lightweight, Kubernetes-based toolkit for defining and deploying network labs and topologies.<br>
+It can be used for infrastructure testing, protocol validation, and CI/CD workflows involving complex network simulations, using Multus CNI for multi-interface support.
+
+[netclab-chart](https://github.com/mbakalarski/netclab-chart) provides a Helm chart for deploying netclab-defined labs onto Kubernetes clusters easily using Helm.<br> It renders the necessary ConfigMap, Pod, and NetworkAttachmentDefinition resources from a structured YAML file and allows the deployment of lab routers, hosts, and traffic/protocol generators.
+
+There are related repos:
+- [netcloud](https://github.com/mbakalarski/netclab): Early steps toward provisioning a Kubernetes environment for netclab and generating manifest files for different router platforms.
+- [netclab-examples](https://github.com/mbakalarski/netclab-examples): Example topologies and automated network tests using `pytest`.
+
 
 ## Prerequisites
 
 Before installing `netclab-chart`, ensure the following are present:
 
-- Kubernetes
-- Helm
-- [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) installed and running
+- Kubernetes with [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) installed and running
+- [Helm](https://helm.sh/docs/intro/install/)
 
 ### Install Multus CNI (if not already installed)
 
@@ -34,11 +35,30 @@ helm install netclab netclab/netclab
 
 ## Configuration
 
-Edit `values.yaml` to define your network.
+Define you network, for example:
+<br>
+
+```mermaid
+flowchart LR
+  OTG --b3--- SR1
+
+  subgraph SUT
+    direction LR
+    SR1 --b1--- SR2
+    SR1 --b2--- SR2
+  end
+
+  OTG --b4--- SR2
+  OTG --b5--- SR2
+```
+
+<br>
 
 ```yaml
+# mytopology.yaml
+
 topology:
-  default_network:
+  default_network:        # to access nodes
     name: b0
     subnet: 10.10.0.0/24
     gateway: 10.10.0.254
@@ -60,8 +80,6 @@ topology:
       network: b5
   - name: srl01
     type: srlinux
-    memory: 2Gi
-    cpu: 500m
     interfaces:
     - name: e1-1
       network: b1
@@ -71,7 +89,7 @@ topology:
       network: b3
   - name: srl02
     type: srlinux
-    memory: 2Gi
+    memory: 2Gi           # to limit resources; chart has defaults
     cpu: 500m
     interfaces:
     - name: e1-1
@@ -80,36 +98,24 @@ topology:
       network: b2
     - name: e1-3
       network: b4
-  - name: linux1
-    type: linux
-    interfaces:
-    - name: eth1
-      network: b3
-  - name: linux2
-    type: linux
-    interfaces:
-    - name: eth1
-      network: b4
+    - name: e1-4
+      network: b5
 ```
 
-## Upgrade or Reinstall
 
-To upgrade the release after making changes:
-```bash
-helm upgrade netclab netclab/netclab --values values.yaml
-```
-or:
 ```bash
 helm uninstall netclab
-helm install netclab netclab/netclab --values values.yaml
+helm install netclab netclab/netclab --values mytopology.yaml
 ```
+
 
 ## Future Plans
 
 - Replace static Helm templates with dynamic controller logic
 - Define a CRD for Topology to enable programmable lab descriptions
-- Add support for additional containerized router platforms
+- Add support for additional containerized or virtualized routers
 - Add Support for multi-node cluster
+
 
 ## Contributing
 
