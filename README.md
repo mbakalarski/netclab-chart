@@ -60,8 +60,6 @@ topology:
       network: b5
   - name: srl01
     type: srlinux
-    memory: 2Gi
-    cpu: 500m
     interfaces:
     - name: e1-1
       network: b1
@@ -71,8 +69,6 @@ topology:
       network: b3
   - name: srl02
     type: srlinux
-    memory: 2Gi
-    cpu: 500m
     interfaces:
     - name: e1-1
       network: b1
@@ -90,6 +86,32 @@ topology:
     interfaces:
     - name: eth1
       network: b4
+```
+
+```mermaid
+graph LR
+L1 -- SR1
+SR1 -- SR2
+SR1 -- SR2
+SR2 -- L2
+```
+
+```mermaid
+graph TB
+    subgraph Network
+        A[Client] --> B[Router]
+        B --> C[Switch]
+        C --> D[Server]
+        C --> E[Firewall]
+    end
+
+    E --> F[Internet]
+    F --> G[External Server]
+    B --> H[Admin Console]
+    
+    class A,B,C,D,E,F,G,H networkStyle;
+    
+    classDef networkStyle fill:#f9f,stroke:#333,stroke-width:2px;
 ```
 
 ## Upgrade or Reinstall
