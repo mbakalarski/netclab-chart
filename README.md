@@ -89,11 +89,13 @@ topology:
 ```
 
 ```mermaid
+  info
+
 graph LR
-L1 -- SR1
-SR1 -- SR2
-SR1 -- SR2
-SR2 -- L2
+  L1 -- SR1;
+  SR1 -- SR2;
+  SR1 -- SR2;
+  SR2 -- L2;
 ```
 
 ```mermaid
