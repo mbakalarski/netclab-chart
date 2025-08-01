@@ -1,14 +1,23 @@
 # netclab-chart
 
-**netclab** is a lightweight, Kubernetes-based toolkit for defining and deploying network labs and topologies.<br>
-It can be used for infrastructure testing, protocol validation, and CI/CD workflows involving complex network simulations, using Multus CNI for multi-interface support.
+**netclab-chart**  is a Helm chart that deploys network topologies onto Kubernetes.
+It leverages [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to support multi-interface containers and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
+<br>
+Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
-[netclab-chart](https://github.com/mbakalarski/netclab-chart) provides a Helm chart for deploying netclab-defined labs onto Kubernetes clusters easily using Helm.<br> It renders the necessary ConfigMap, Pod, and NetworkAttachmentDefinition resources from a structured YAML file and allows the deployment of lab routers, hosts, and traffic/protocol generators.
+There is related repo:
+- [netclab-examples](https://github.com/mbakalarski/netclab-examples): Example topologies and automated network tests using `pytest` and [OTG](https://github.com/open-traffic-generator).
 
-There are related repos:
-- [netcloud](https://github.com/mbakalarski/netclab): Early steps toward provisioning a Kubernetes environment for netclab and generating manifest files for different router platforms.
-- [netclab-examples](https://github.com/mbakalarski/netclab-examples): Example topologies and automated network tests using `pytest`.
 
+## Use Cases
+
+**netclab-chart** enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
+- **Network design validation**: Validate HLD/LLD configurations and device behaviors before committing designs.
+- Test automation: Develop and verify automation scripts for traffic/protocol generators or analyzers (e.g., APIs of IxNetwork) — effectively unit testing your test logic.
+- Image validation: Test new versions of NOS (virtual or HW-aligned) to verify feature support and functionality.
+- Training & certification prep: Practice CLI, protocols, and topologies in a safe, repeatable lab — ideal for students and professionals preparing for vendor certifications.
+
+Have a use case we didn’t list? Open an issue or share your ideas — contributions are welcome!
 
 ## Prerequisites
 
