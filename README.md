@@ -13,9 +13,9 @@ There is related repo:
 
 **netclab-chart** enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
 - **Network design validation**: Validate HLD/LLD configurations and device behaviors before committing designs.
-- Test automation: Develop and verify automation scripts for traffic/protocol generators or analyzers (e.g., APIs of IxNetwork) — effectively unit testing your test logic.
-- Image validation: Test new versions of NOS (virtual or HW-aligned) to verify feature support and functionality.
-- Training & certification prep: Practice CLI, protocols, and topologies in a safe, repeatable lab — ideal for students and professionals preparing for vendor certifications.
+- **Test automation**: Develop and verify automation scripts for traffic/protocol generators or analyzers (e.g., APIs of IxNetwork) — effectively unit testing your test logic.
+- **Image validation**: Test new versions of NOS (virtual or HW-aligned) to verify feature support and functionality.
+- **Training & certification prep**: Practice CLI, protocols, and topologies in a safe, repeatable lab — ideal for students and professionals preparing for vendor certifications.
 
 Have a use case we didn’t list? Open an issue or share your ideas — contributions are welcome!
 
