@@ -1,0 +1,79 @@
+{{- if .Capabilities.APIVersions.Has "cdi.kubevirt.io/v1beta1" }}
+{{- if .Capabilities.APIVersions.Has "kubevirt.io/v1" }}
+{{- $root := . }}
+
+{{- $csr_default_memory := "4Gi" }}
+{{- $csr_default_cpu := "2000m" }}
+{{- $csr_default_storage := "10Gi" }}
+
+
+{{- range $i, $ := .Values.topology.nodes }}
+{{- if eq .type "csr" }}
+---
+apiVersion: cdi.kubevirt.io/v1beta1
+kind: DataVolume
+metadata:
+  name: {{ .name }}-data-volume
+spec:
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: {{ default $csr_default_storage .storage }}
+  source:
+    http:
+      url: {{ .imageSourceHttp }}
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: {{ .name }}
+  labels:
+    kubevirt.io/os: iosxe
+    vendor: cisco
+{{ include "netclab.labels" $root | indent 4 }}
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: {{ .name }}
+    spec:
+      domain:
+        devices:
+          autoattachGraphicsDevice: false
+          interfaces:
+          {{- range .interfaces }}
+          - name: {{ .name }}
+            bridge: {}
+          {{- end }}
+          disks:
+          - disk:
+              bus: virtio
+            name: disk0
+        resources:
+          requests:
+            cpu: {{ default $csr_default_cpu .cpu }}
+            memory: {{ default $csr_default_memory .memory }}
+      volumes:
+      - name: disk0
+        persistentVolumeClaim:
+          claimName: {{ .name }}-data-volume
+      networks:
+      - name: ge1
+        multus:
+          default: true
+          networkName: kube-system/{{ $root.Values.topology.default_network.name }}
+      {{- range .interfaces }}
+      - name: {{ .name }}
+        multus:
+          networkName: {{ .network }}
+      {{- end }}
+
+{{- end }}
+{{- end }}
+{{- else }}
+{{- fail "❌ VirtualMachine (kubevirt.io/v1) not found. Install KubeVirt before proceeding."}}
+{{- end }}
+{{- end }}

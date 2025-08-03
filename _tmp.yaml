@@ -1,0 +1,17 @@
+topology:
+  default_network:        # to access nodes
+    name: b0
+    subnet: 10.10.0.0/24
+    gateway: 10.10.0.254
+  networks:
+  - name: b1
+  - name: b2
+  nodes:
+  - name: csr1
+    type: csr
+    imageSourceHttp: http://192.168.122.131:8080/csr1000v-universalk9.17.03.04a-serial.qcow2
+    interfaces:
+    - name: ge2
+      network: b1
+    - name: ge3
+      network: b2

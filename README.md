@@ -5,10 +5,6 @@ It leverages [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to
 <br>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
-There is related repo:
-- [netclab-examples](https://github.com/mbakalarski/netclab-examples): Example topologies and automated network tests using `pytest` and [OTG](https://github.com/open-traffic-generator).
-
-
 ## Use Cases
 
 **netclab-chart** enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
@@ -25,11 +21,24 @@ Before installing `netclab-chart`, ensure the following are present:
 
 - Kubernetes with [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) installed and running
 - [Helm](https://helm.sh/docs/intro/install/)
+- and if VM in topology is planned add [KubeVirt](https://github.com/kubevirt/kubevirt) + [CDI](https://github.com/kubevirt/containerized-data-importer)
 
-### Install Multus CNI (if not already installed)
+#### quickstart for [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni):
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
+```
+
+#### quickstart for [KubeVirt](https://github.com/kubevirt/kubevirt) and [CDI](https://github.com/kubevirt/containerized-data-importer):
+
+```bash
+export VERSION=$(curl -s https://storage.googleapis.com/kubevirt-prow/release/kubevirt/kubevirt/stable.txt)
+kubectl create -f "https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/kubevirt-operator.yaml"
+kubectl create -f "https://github.com/kubevirt/kubevirt/releases/download/${VERSION}/kubevirt-cr.yaml"
+
+export VERSION=$(curl -s https://api.github.com/repos/kubevirt/containerized-data-importer/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+kubectl create -f "https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml"
+kubectl create -f "https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml"
 ```
 
 ## Installation
@@ -49,16 +58,16 @@ Define you network, for example:
 
 ```mermaid
 flowchart LR
-  OTG --b3--- SR1
+  OTG --b3--- CSR1
 
   subgraph SUT
     direction LR
-    SR1 --b1--- SR2
-    SR1 --b2--- SR2
+    CSR1 --b1--- SR1
+    CSR1 --b2--- SR1
   end
 
-  OTG --b4--- SR2
-  OTG --b5--- SR2
+  OTG --b4--- SR1
+  OTG --b5--- SR1
 ```
 
 <br>
@@ -87,16 +96,17 @@ topology:
       network: b4
     - name: eth3
       network: b5
-  - name: srl01
-    type: srlinux
+  - name: csr1
+    type: csr
+    imageSourceHttp: http://172.18.0.1:8080/csr1000v-universalk9.17.03.04a-serial.qcow2
     interfaces:
-    - name: e1-1
+    - name: ge2
       network: b1
-    - name: e1-2
+    - name: ge3
       network: b2
-    - name: e1-3
+    - name: ge4
       network: b3
-  - name: srl02
+  - name: sr1
     type: srlinux
     memory: 2Gi           # to limit resources; chart has defaults
     cpu: 500m
@@ -128,5 +138,12 @@ helm install netclab netclab/netclab --values mytopology.yaml
 
 ## Contributing
 
-Feel free to open issues or submit PRs on:
-https://github.com/mbakalarski/netclab-chart
+Feel free to open issues or submit PRs on [netclab-chart](https://github.com/mbakalarski/netclab-chart).
+
+
+## Related repos:
+- [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni)
+- [KubeVirt](https://github.com/kubevirt/kubevirt)
+- [CDI](https://github.com/kubevirt/containerized-data-importer)
+- [OTG](https://github.com/open-traffic-generator)
+- [netclab-examples](https://github.com/mbakalarski/netclab-examples)
