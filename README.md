@@ -5,9 +5,6 @@ It leverages [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to
 <br>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
-There is related repo:
-- [netclab-examples](https://github.com/mbakalarski/netclab-examples): Example topologies and automated network tests using `pytest` and [OTG](https://github.com/open-traffic-generator).
-
 
 ## Use Cases
 
@@ -21,26 +18,51 @@ Have a use case we didn’t list? Open an issue or share your ideas — contribu
 
 ## Prerequisites
 
-Before installing `netclab-chart`, ensure the following are present:
+Before installing Netclab Chart, ensure the following are present:
 
-- Kubernetes with [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) installed and running
-- [Helm](https://helm.sh/docs/intro/install/)
+- [docker](https://docs.docker.com/engine/install/)
+- [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
+- [helm](https://helm.sh/docs/intro/install/)
 
-### Install Multus CNI (if not already installed)
-
-```bash
-kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset-thick.yml
-```
 
 ## Installation
 
+- Kind cluster
 ```bash
-helm search hub netclab --list-repo-url
+kind create cluster --name netclab
+```
+
+- CNI Network bridge plugin:
+```bash
+docker exec netclab-control-plane bash -c \
+'curl -L https://github.com/containernetworking/plugins/releases/download/v1.8.0/cni-plugins-linux-amd64-v1.8.0.tgz \
+| tar -xz -C /opt/cni/bin ./bridge'
+```
+
+- Multus CNI plugin:
+```bash
+kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
+kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
+```
+
+- Netclab Chart:
+```bash
 helm repo add netclab https://mbakalarski.github.io/netclab-chart
 helm repo update
-helm search repo netclab
 helm install netclab netclab/netclab
 ```
+
+- Wait a while and check:
+```bash
+kubectl get pod
+```
+
+- Check resources if PODs have been in a Pending state for too long:
+```bash
+kubectl describe nodes
+```
+
 
 ## Configuration
 
@@ -120,10 +142,9 @@ helm install netclab netclab/netclab --values mytopology.yaml
 
 ## Future Plans
 
+- Add support for additional containerized or virtualized routers
 - Replace static Helm templates with dynamic controller logic
 - Define a CRD for Topology to enable programmable lab descriptions
-- Add support for additional containerized or virtualized routers
-- Add Support for multi-node cluster
 
 
 ## Contributing
