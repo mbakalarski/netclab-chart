@@ -106,7 +106,7 @@ kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 
 - Test (convergence may take time):
 ```bash
-kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2 -c3
+kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
 ```
 
 
