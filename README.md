@@ -1,20 +1,19 @@
-# netclab-chart
+# Netclab chart
 
-**netclab-chart**  is a Helm chart that deploys network topologies onto Kubernetes.
-It leverages [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) to support multi-interface containers and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
+Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.
+It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
 <br>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
 
 ## Use Cases
 
-**netclab-chart** enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
-- **Network design validation**: Validate HLD/LLD configurations and device behaviors before committing designs.
-- **Test automation**: Develop and verify automation scripts for traffic/protocol generators or analyzers (e.g., APIs of IxNetwork) — effectively unit testing your test logic.
-- **Image validation**: Test new versions of NOS (virtual or HW-aligned) to verify feature support and functionality.
+This chart enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
+- **Network design validation**: Test high- and low-level design (HLD/LLD) configurations and device behavior before committing to a final design.
+- **Test automation**: Develop and verify automation scripts for traffic or protocol generators/analyzers (e.g., IxNetwork APIs, OTG) — effectively unit-testing your test logic.
+- **Image validation**: Validate new versions of network operating systems (NOS), whether virtual or hardware-aligned, to ensure feature support and functionality.
 - **Training & certification prep**: Practice CLI, protocols, and topologies in a safe, repeatable lab — ideal for students and professionals preparing for vendor certifications.
 
-Have a use case we didn’t list? Open an issue or share your ideas — contributions are welcome!
 
 ## Prerequisites
 
@@ -46,97 +45,68 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
 ```
 
-- Netclab Chart:
+
+- Example topology:
+
+```bash
+git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
+```
+
+```
++--------+
+| h01    |
+|        |
+|    e1  |
++--------+
+    |
+    b2
+    |
++-----------+          +-----------+
+| e1-2      |          | srl02     |
+|           |          |           |
+|       e1-1| -- b1 -- | e1-1      |
+|           |          |           |
+|           |          |           |
+|           |          |           |
+| srl01     |          |     e1-2  |
++-----------+          +-----------+
+                              |
+                              b3
+                              |
+                         +--------+
+                         |     e1 |
+                         |        |
+                         | h02    |
+                         +--------+
+```
+
+- Start nodes:
 ```bash
 helm repo add netclab https://mbakalarski.github.io/netclab-chart
 helm repo update
-helm install netclab netclab/netclab
+helm install netclab netclab/netclab --values example/topology.yaml
+
+kubectl get pod -o wide
 ```
 
-- Wait a while and check:
+- Configure nodes:
 ```bash
-kubectl get pod
+kubectl cp ./example/srl01.cfg srl01:srl01.cfg
+kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
+
+kubectl cp ./example/srl02.cfg srl02:srl02.cfg
+kubectl exec srl02 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl02.cfg'
+
+kubectl exec h01 -- ip address add 172.20.0.2/24 dev e1
+kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
+
+kubectl exec h02 -- ip address add 172.30.0.2/24 dev e1
+kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 ```
 
-- Check resources if PODs have been in a Pending state for too long:
+- Test:
 ```bash
-kubectl describe nodes
-```
-
-
-## Configuration
-
-Define you network, for example:
-<br>
-
-```mermaid
-flowchart LR
-  OTG --b3--- SR1
-
-  subgraph SUT
-    direction LR
-    SR1 --b1--- SR2
-    SR1 --b2--- SR2
-  end
-
-  OTG --b4--- SR2
-  OTG --b5--- SR2
-```
-
-<br>
-
-```yaml
-# mytopology.yaml
-
-topology:
-  default_network:        # to access nodes
-    name: b0
-    subnet: 10.10.0.0/24
-    gateway: 10.10.0.254
-  networks:
-  - name: b1
-  - name: b2
-  - name: b3
-  - name: b4
-  - name: b5
-  nodes:
-  - name: otg
-    type: ixia-c
-    interfaces:
-    - name: eth1
-      network: b3
-    - name: eth2
-      network: b4
-    - name: eth3
-      network: b5
-  - name: srl01
-    type: srlinux
-    interfaces:
-    - name: e1-1
-      network: b1
-    - name: e1-2
-      network: b2
-    - name: e1-3
-      network: b3
-  - name: srl02
-    type: srlinux
-    memory: 2Gi           # to limit resources; chart has defaults
-    cpu: 500m
-    interfaces:
-    - name: e1-1
-      network: b1
-    - name: e1-2
-      network: b2
-    - name: e1-3
-      network: b4
-    - name: e1-4
-      network: b5
-```
-
-
-```bash
-helm uninstall netclab
-helm install netclab netclab/netclab --values mytopology.yaml
+kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2 -c3
 ```
 
 
