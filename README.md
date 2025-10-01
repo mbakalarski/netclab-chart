@@ -89,7 +89,7 @@ helm install netclab netclab/netclab --values example/topology.yaml
 kubectl get pod -o wide
 ```
 
-- Configure nodes:
+- Configure the nodes (repeat if they're not ready yet):
 ```bash
 kubectl cp ./example/srl01.cfg srl01:srl01.cfg
 kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
@@ -97,10 +97,10 @@ kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.
 kubectl cp ./example/srl02.cfg srl02:srl02.cfg
 kubectl exec srl02 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl02.cfg'
 
-kubectl exec h01 -- ip address add 172.20.0.2/24 dev e1
+kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
 kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
 
-kubectl exec h02 -- ip address add 172.30.0.2/24 dev e1
+kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
 kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 ```
 
