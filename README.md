@@ -32,7 +32,7 @@ Before installing Netclab Chart, ensure the following are present:
 kind create cluster --name netclab
 ```
 
-- CNI Network bridge plugin:
+- CNI bridge plugin:
 ```bash
 docker exec netclab-control-plane bash -c \
 'curl -L https://github.com/containernetworking/plugins/releases/download/v1.8.0/cni-plugins-linux-amd64-v1.8.0.tgz \
