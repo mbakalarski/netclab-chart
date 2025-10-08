@@ -98,7 +98,7 @@ helm install netclab netclab/netclab --values examples/topology-srlinux.yaml
 kubectl get pod -o wide
 ```
 
-- Configure if Pods are Running:
+- Configure the nodes (repeat if they're not ready yet):
 ```bash
 kubectl cp ./examples/srl01.cfg srl01:srl01.cfg
 kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
@@ -126,7 +126,7 @@ helm install netclab netclab/netclab --values examples/topology-frrouting.yaml
 kubectl get pod -o wide
 ```
 
-- Configure if Pods are Running:
+- Configure the nodes (repeat if they're not ready yet):
 ```bash
 kubectl exec frr01 -- ip addr add 10.0.0.1/32 dev lo
 kubectl exec frr01 -- ip addr add 10.0.1.1/24 dev e1-1
