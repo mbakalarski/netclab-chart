@@ -2,11 +2,11 @@ apiVersion: v1
 entries:
   netclab:
   - apiVersion: v2
-    appVersion: 0.1.0
-    created: "2025-07-29T14:14:05.165782074Z"
+    appVersion: 0.1.4
+    created: "2025-10-08T15:16:28.590329134Z"
     description: Helm chart to deploy a containerized network lab with Ixia-C and
       virtual routers
-    digest: cf4d3d93fccc6b4a2a38dafa373b537cc7b16dc27b0d80a02acf96f042ad60d4
+    digest: 012712eb49a61d5970da60a4ac2a971d0eeec741006585f0ca65b1568507e34b
     home: https://github.com/mbakalarski
     keywords:
     - kind
@@ -20,8 +20,9 @@ entries:
     - srlinux
     - simulation
     - testbed
+    - frrouting
     maintainers:
-    - name: M. Bakalarski
+    - name: M.Bakalarski
       url: https://github.com/mbakalarski
     name: netclab
     sources:
@@ -34,6 +35,6 @@ entries:
     - https://github.com/mbakalarski/netclab-examples
     type: application
     urls:
-    - https://mbakalarski.github.io/netclab-chart/netclab-0.1.3.tgz
-    version: 0.1.3
-generated: "2025-07-29T14:14:05.164548765Z"
+    - https://mbakalarski.github.io/netclab-chart/netclab-0.1.4.tgz
+    version: 0.1.4
+generated: "2025-10-08T15:16:28.589063692Z"
