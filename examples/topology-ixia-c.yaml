@@ -1,0 +1,53 @@
+topology:
+  default_network:
+    name: b0
+    subnet: 10.10.0.0/24
+    gateway: 10.10.0.254
+  networks:
+  - name: b1
+  - name: b2
+  - name: b3
+  - name: b4
+  - name: b5
+  nodes:
+  - name: otg
+    type: ixia-c
+    interfaces:
+    - name: eth1
+      network: b3
+    - name: eth2
+      network: b4
+    - name: eth3
+      network: b5
+  - name: srl01
+    type: srlinux
+    memory: 2Gi
+    cpu: 500m
+    interfaces:
+    - name: e1-1
+      network: b1
+    - name: e1-2
+      network: b2
+    - name: e1-3
+      network: b3
+  - name: srl02
+    type: srlinux
+    memory: 2Gi
+    cpu: 500m
+    interfaces:
+    - name: e1-1
+      network: b1
+    - name: e1-2
+      network: b2
+    - name: e1-3
+      network: b4
+  - name: linux1
+    type: linux
+    interfaces:
+    - name: eth1
+      network: b3
+  - name: linux2
+    type: linux
+    interfaces:
+    - name: eth1
+      network: b4
