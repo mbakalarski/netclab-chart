@@ -27,7 +27,7 @@ Before installing Netclab Chart, ensure the following are present:
 
 ## Installation
 
-- Kind cluster
+- Kind cluster:
 ```bash
 kind create cluster --name netclab
 ```
@@ -45,9 +45,14 @@ kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-c
 kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
 ```
 
+- Add helm repo for netclab chart:
+```bash
+helm repo add netclab https://mbakalarski.github.io/netclab-chart
+helm repo update
+```
 
-- Example topology:
 
+## Example topology
 ```bash
 git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 ```
@@ -62,13 +67,14 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
     b2
     |
 +-----------+          +-----------+
-| e1-2      |          | srl02     |
+| e1-2      |          | srl02 or  |
+|           |          | frr02     |
 |           |          |           |
 |       e1-1| -- b1 -- | e1-1      |
 |           |          |           |
 |           |          |           |
-|           |          |           |
-| srl01     |          |     e1-2  |
+| srl01 or  |          |           |
+| frr01     |          |     e1-2  |
 +-----------+          +-----------+
                               |
                               b3
@@ -80,21 +86,24 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
                          +--------+
 ```
 
+### Follow the instructions for **SRLinux** or **FRRouting**
+
+
+---
+### SRLinux
+
 - Start nodes:
 ```bash
-helm repo add netclab https://mbakalarski.github.io/netclab-chart
-helm repo update
-helm install netclab netclab/netclab --values example/topology.yaml
-
+helm install netclab netclab/netclab --values examples/topology-srlinux.yaml
 kubectl get pod -o wide
 ```
 
 - Configure the nodes (repeat if they're not ready yet):
 ```bash
-kubectl cp ./example/srl01.cfg srl01:srl01.cfg
+kubectl cp ./examples/srl01.cfg srl01:srl01.cfg
 kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
 
-kubectl cp ./example/srl02.cfg srl02:srl02.cfg
+kubectl cp ./examples/srl02.cfg srl02:srl02.cfg
 kubectl exec srl02 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl02.cfg'
 
 kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
@@ -108,7 +117,51 @@ kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 ```bash
 kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
 ```
+---
+### FRRouting
 
+- Start nodes:
+```bash
+helm install netclab netclab/netclab --values examples/topology-frrouting.yaml
+kubectl get pod -o wide
+```
+
+- Configure the nodes (repeat if they're not ready yet):
+```bash
+kubectl exec frr01 -- ip addr add 10.0.0.1/32 dev lo
+kubectl exec frr01 -- ip addr add 10.0.1.1/24 dev e1-1
+kubectl exec frr01 -- ip addr add 172.20.0.1/24 dev e1-2
+kubectl exec frr01 -- touch /etc/frr/vtysh.conf
+kubectl exec frr01 -- sed -i -e 's/bgpd=no/bgpd=yes/g' /etc/frr/daemons
+kubectl exec frr01 -- /usr/lib/frr/frrinit.sh start
+kubectl cp ./examples/frr01.cfg frr01:/frr01.cfg
+kubectl exec frr01 -- vtysh -f /frr01.cfg
+
+kubectl exec frr02 -- ip addr add 10.0.0.2/32 dev lo
+kubectl exec frr02 -- ip addr add 10.0.1.2/24 dev e1-1
+kubectl exec frr02 -- ip addr add 172.30.0.1/24 dev e1-2
+kubectl exec frr02 -- touch /etc/frr/vtysh.conf
+kubectl exec frr02 -- sed -i -e 's/bgpd=no/bgpd=yes/g' /etc/frr/daemons
+kubectl exec frr02 -- /usr/lib/frr/frrinit.sh start
+kubectl cp ./examples/frr02.cfg frr02:/frr02.cfg
+kubectl exec frr02 -- vtysh -f /frr02.cfg
+
+kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
+kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
+
+kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
+kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
+```
+
+- Test (convergence may take time):
+```bash
+kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
+```
+
+## Remove topology
+```bash
+helm uninstall netclab
+```
 
 ## Future Plans
 

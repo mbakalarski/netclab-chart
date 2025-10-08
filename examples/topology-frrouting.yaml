@@ -1,0 +1,34 @@
+topology:
+  default_network:
+    name: b0
+    subnet: 192.168.0.0/24
+    gateway: 192.168.0.254
+  networks:
+  - name: b1
+  - name: b2
+  - name: b3
+  nodes:
+  - name: h01
+    type: linux
+    interfaces:
+    - name: e1
+      network: b2
+  - name: h02
+    type: linux
+    interfaces:
+    - name: e1
+      network: b3
+  - name: frr01
+    type: frrouting
+    interfaces:
+    - name: e1-1
+      network: b1
+    - name: e1-2
+      network: b2
+  - name: frr02
+    type: frrouting
+    interfaces:
+    - name: e1-1
+      network: b1
+    - name: e1-2
+      network: b3

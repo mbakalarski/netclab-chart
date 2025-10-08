@@ -1,0 +1,42 @@
+{{- $root := . }}
+
+{{- $frrouting_default_img := "quay.io/frrouting/frr:8.4.7" }}
+{{- $frrouting_default_memory := "512Mi" }}
+{{- $frrouting_default_cpu := "500m" }}
+
+
+{{- range $i, $ := .Values.topology.nodes }}
+{{- if eq .type "frrouting" }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .name }}
+  annotations:
+    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
+    k8s.v1.cni.cncf.io/networks:
+    {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
+  labels:
+    vendor: frrouting
+{{ include "netclab.labels" $root | indent 4 }}
+spec:
+  affinity:
+{{ include "netclab.podAffinity" $root | indent 4 }}
+  containers:
+  - name: {{ .name }}
+    image: {{ default $frrouting_default_img .image }}
+    args:
+    - sh
+    - -c
+    - sleep inf
+    securityContext:
+      privileged: true
+      runAsUser: 0
+      runAsGroup: 0
+    resources:
+      limits:
+        memory: {{ default $frrouting_default_memory .memory }}
+        cpu: {{ default $frrouting_default_cpu .cpu }}
+
+{{- end }}
+{{- end }}
