@@ -3,7 +3,7 @@ name: netclab
 description: Helm chart to deploy a containerized network lab with Ixia-C and virtual routers
 type: application
 version: 0.1.4
-appVersion: "0.1.1"
+appVersion: "0.1.4"
 
 maintainers:
 - name: M.Bakalarski
