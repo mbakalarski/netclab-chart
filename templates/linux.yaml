@@ -18,6 +18,7 @@ metadata:
     k8s.v1.cni.cncf.io/networks:
     {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
 spec:
+  terminationGracePeriodSeconds: 0
   affinity:
 {{ include "netclab.podAffinity" $root | indent 4 }}
   containers:

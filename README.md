@@ -135,18 +135,18 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 
 - Configure the nodes (repeat if they're not ready yet):
   ```bash
-  kubectl exec frr01 -- ip addr add 10.0.0.1/32 dev lo
-  kubectl exec frr01 -- ip addr add 10.0.1.1/24 dev e1-1
-  kubectl exec frr01 -- ip addr add 172.20.0.1/24 dev e1-2
+  kubectl exec frr01 -- ip address add 10.0.0.1/32 dev lo
+  kubectl exec frr01 -- ip address replace 10.0.1.1/24 dev e1-1
+  kubectl exec frr01 -- ip address replace 172.20.0.1/24 dev e1-2
   kubectl exec frr01 -- touch /etc/frr/vtysh.conf
   kubectl exec frr01 -- sed -i -e 's/bgpd=no/bgpd=yes/g' /etc/frr/daemons
   kubectl exec frr01 -- /usr/lib/frr/frrinit.sh start
   kubectl cp ./examples/frr01.cfg frr01:/frr01.cfg
   kubectl exec frr01 -- vtysh -f /frr01.cfg
   
-  kubectl exec frr02 -- ip addr add 10.0.0.2/32 dev lo
-  kubectl exec frr02 -- ip addr add 10.0.1.2/24 dev e1-1
-  kubectl exec frr02 -- ip addr add 172.30.0.1/24 dev e1-2
+  kubectl exec frr02 -- ip address add 10.0.0.2/32 dev lo
+  kubectl exec frr02 -- ip address replace 10.0.1.2/24 dev e1-1
+  kubectl exec frr02 -- ip address replace 172.30.0.1/24 dev e1-2
   kubectl exec frr02 -- touch /etc/frr/vtysh.conf
   kubectl exec frr02 -- sed -i -e 's/bgpd=no/bgpd=yes/g' /etc/frr/daemons
   kubectl exec frr02 -- /usr/lib/frr/frrinit.sh start
