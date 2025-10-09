@@ -90,7 +90,6 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 
 <details>
 <summary>SRLinux details</summary>
-<br/>
 
 - Start nodes:
   ```bash
@@ -108,7 +107,7 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 
   kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
   kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
-  
+
   kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
   kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
   ```
@@ -124,9 +123,9 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
   ```
 </details>
 
+
 <details>
 <summary>FRRouting details</summary>
-<br/>
 
 - Start nodes:
   ```bash
