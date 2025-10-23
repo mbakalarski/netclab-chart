@@ -1,13 +1,43 @@
 {{- if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1" }}
 {{- $root := . }}
 {{- range .Values.topology.networks }}
+
+{{- if eq .type "veth" }}
+{{- $networkName := .name }}
+{{- range $root.Values.topology.nodes }}
+{{- $nodeName := .name }}
+{{- range .interfaces }}
+{{- if eq .network $networkName }}
+{{- $deviceName := printf "%s-%s" $networkName $nodeName }}
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: {{ $deviceName }}
+  labels: {{- include "netclab.labels" $root | nindent 4 }}
+spec:
+  config: '{
+      "cniVersion": "0.3.1",
+      "name": "{{ $deviceName }}",
+      "plugins": [
+        {
+          "type": "host-device",
+          "device": "{{ $deviceName }}",
+          "ipam": {}
+        }
+      ]
+    }'
+
+{{- end}} # if eq .network $networkName
+{{- end}}  # range .interfaces
+{{- end}}  # range $root.Values.topology.nodes
+{{- else}} # if eq .type "veth"
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
   name: {{ .name }}
-  labels:
-{{ include "netclab.labels" $root | indent 4 }}
+  labels: {{- include "netclab.labels" $root | nindent 4 }}
 spec:
   config: '{
       "cniVersion": "0.3.1",
@@ -20,7 +50,9 @@ spec:
         }
       ]
     }'
-{{- end }}
-{{- else }}
+{{- end }} # if eq .type "veth"
+
+{{- end }} # range .Values.topology.networks
+{{- else }} # if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1"
 {{ fail "❌ Multus CNI CRD (k8s.cni.cncf.io/v1) not found. Install Multus before proceeding." }}
-{{- end }}
+{{- end }} # if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1"

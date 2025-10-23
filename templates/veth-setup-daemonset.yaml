@@ -1,0 +1,68 @@
+{{- $root := . }}
+{{- if eq (include "netclab.hasVeth" .) "true" }}
+
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: veth-setup
+  labels:
+    app: veth-setup
+    {{- include "netclab.labels" $root | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  selector:
+    matchLabels:
+      app: veth-setup
+  template:
+    metadata:
+      labels:
+        app: veth-setup
+    spec:
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - name: setup-veth
+        image: alpine:3.20
+        securityContext:
+          privileged: true
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -eux
+          
+        {{- range $network := $root.Values.topology.networks }}
+        {{- if eq $network.type "veth" }}
+        {{- $vethpair := list }}
+        
+        {{- range $node := $root.Values.topology.nodes }}
+        {{- range $iface := .interfaces }}
+        {{- if eq $iface.network $network.name }}
+
+          # {{ $network.name }} {{ $node.name}} {{ $iface.network }}
+          if ! ip link show veth-a >/dev/null 2>&1; then
+            ip link add veth-a type veth peer name veth-b
+          fi
+          ip link set veth-a up || true
+          ip link set veth-b up || true
+          echo "veth pair created on $(hostname)"
+
+        {{- end }}
+        {{- end }}
+        {{- end }}
+
+        {{- end }}
+        {{- end }}
+
+          sleep infinity  # keep pod alive to prevent restart
+      tolerations:
+      - operator: Exists
+      nodeSelector:
+        kubernetes.io/os: linux
+
+{{- end }} # if eq (include "netclab.hasVeth" .) "true"

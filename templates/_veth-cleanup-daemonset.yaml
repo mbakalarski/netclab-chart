@@ -1,0 +1,45 @@
+{{- $root := . }}
+
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: veth-cleanup
+  labels: {{- include "netclab.labels" $root | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-delete
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: hook-succeeded
+spec:
+  selector:
+    matchLabels:
+      app: veth-cleanup
+  template:
+    metadata:
+      labels:
+        app: veth-cleanup
+    spec:
+      hostNetwork: true
+      hostPID: true
+      restartPolicy: Never
+      containers:
+        - name: cleanup-veth
+          image: alpine:3.20
+          securityContext:
+            privileged: true
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eux
+              if ip link show veth-a >/dev/null 2>&1; then
+                ip link delete veth-a || true
+                echo "Deleted veth-a on $(hostname)"
+              fi
+              if ip link show veth-b >/dev/null 2>&1; then
+                ip link delete veth-b || true
+                echo "Deleted veth-b on $(hostname)"
+              fi
+      tolerations:
+        - operator: Exists
