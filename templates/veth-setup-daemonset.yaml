@@ -38,22 +38,28 @@ spec:
           
         {{- range $network := $root.Values.topology.networks }}
         {{- if eq $network.type "veth" }}
-        {{- $vethpair := list }}
+        {{- $nodesWithVethpair := list }}
         
         {{- range $node := $root.Values.topology.nodes }}
         {{- range $iface := .interfaces }}
         {{- if eq $iface.network $network.name }}
 
-          # {{ $network.name }} {{ $node.name}} {{ $iface.network }}
-          if ! ip link show veth-a >/dev/null 2>&1; then
-            ip link add veth-a type veth peer name veth-b
-          fi
-          ip link set veth-a up || true
-          ip link set veth-b up || true
-          echo "veth pair created on $(hostname)"
+        {{- $nodesWithVethpair = append $nodesWithVethpair $node.name }}
 
         {{- end }}
         {{- end }}
+        {{- end }}
+
+        {{- if eq (len $nodesWithVethpair) 2 }}
+          {{- $vethA := printf "%s-%s" $network.name (index $nodesWithVethpair 0) }}
+          {{- $vethB := printf "%s-%s" $network.name (index $nodesWithVethpair 1) }}
+
+          if ! ip link show {{ $vethA }} >/dev/null 2>&1; then
+            ip link add {{ $vethA }} type veth peer name {{ $vethB }}
+          fi
+          ip link set {{ $vethA }} up || true
+          ip link set {{ $vethB }} up || true
+          echo "veth pair {{ $vethA }},{{ $vethB }} created on $(hostname)"
         {{- end }}
 
         {{- end }}
