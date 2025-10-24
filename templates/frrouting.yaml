@@ -1,11 +1,13 @@
 {{- $root := . }}
 
-{{- $frrouting_default_img := "quay.io/frrouting/frr:8.4.7" }}
-{{- $frrouting_default_memory := "512Mi" }}
-{{- $frrouting_default_cpu := "500m" }}
+{{- $frroutingDefaultImg := "quay.io/frrouting/frr:8.4.7" }}
+{{- $frroutingDefaultMemory := "512Mi" }}
+{{- $frroutingDefaultCpu := "500m" }}
 
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
 
-{{- range $i, $ := .Values.topology.nodes }}
+{{- range $i, $node := .Values.topology.nodes }}
+{{- $nodeName := .name }}
 {{- if eq .type "frrouting" }}
 ---
 apiVersion: v1
@@ -14,17 +16,16 @@ metadata:
   name: {{ .name }}
   annotations:
     v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
-    k8s.v1.cni.cncf.io/networks:
-    {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
+    k8s.v1.cni.cncf.io/networks: {{ include "netclab.nodeNetworks" (dict "node" $node "networkTypeMap" $networkTypeMap) }}
   labels:
     vendor: frrouting
-{{ include "netclab.labels" $root | indent 4 }}
+    {{- include "netclab.labels" $root | nindent 4 }}
 spec:
   affinity:
-{{ include "netclab.podAffinity" $root | indent 4 }}
+  {{- include "netclab.podAffinity" $root | nindent 4 }}
   containers:
   - name: {{ .name }}
-    image: {{ default $frrouting_default_img .image }}
+    image: {{ default $frroutingDefaultImg .image }}
     args:
     - sh
     - -c
@@ -35,8 +36,8 @@ spec:
       runAsGroup: 0
     resources:
       limits:
-        memory: {{ default $frrouting_default_memory .memory }}
-        cpu: {{ default $frrouting_default_cpu .cpu }}
+        memory: {{ default $frroutingDefaultMemory .memory }}
+        cpu: {{ default $frroutingDefaultCpu .cpu }}
 
 {{- end }}
 {{- end }}
