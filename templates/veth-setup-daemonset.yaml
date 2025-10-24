@@ -13,7 +13,7 @@ metadata:
   annotations:
     helm.sh/hook: pre-install
     helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: "before-hook-creation"
 spec:
   selector:
     matchLabels:
@@ -55,11 +55,13 @@ spec:
           {{- $vethB := printf "%s-%s" $network.name (index $nodesWithVethpair 1) }}
 
           if ! ip link show {{ $vethA }} >/dev/null 2>&1; then
-            ip link add {{ $vethA }} type veth peer name {{ $vethB }}
+            ip link add {{ $vethA }} type veth
+            peername=$(ip link | grep "{{ $vethA }}@" | awk -F':' '{print $2}' | awk -F'@' '{print $2}')
+            ip link set dev $peername name {{ $vethB }}
           fi
           ip link set {{ $vethA }} up || true
           ip link set {{ $vethB }} up || true
-          echo "veth pair {{ $vethA }},{{ $vethB }} created on $(hostname)"
+
         {{- end }}
 
         {{- end }}
@@ -71,4 +73,4 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
 
-{{- end }} # if eq (include "netclab.hasVeth" .) "true"
+{{- end }}

@@ -1,4 +1,5 @@
 {{- $root := . }}
+{{- if eq (include "netclab.hasVeth" .) "true" }}
 
 {{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
 
@@ -6,11 +7,13 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: veth-cleanup
-  labels: {{- include "netclab.labels" $root | nindent 4 }}
+  labels:
+  app: veth-cleanup
+  {{- include "netclab.labels" $root | nindent 4 }}
   annotations:
     helm.sh/hook: post-delete
     helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: "hook-succeeded"
 spec:
   selector:
     matchLabels:
@@ -24,22 +27,49 @@ spec:
       hostPID: true
       restartPolicy: Never
       containers:
-        - name: cleanup-veth
-          image: alpine:3.20
-          securityContext:
-            privileged: true
-          command:
-            - /bin/sh
-            - -c
-            - |
-              set -eux
-              if ip link show veth-a >/dev/null 2>&1; then
-                ip link delete veth-a || true
-                echo "Deleted veth-a on $(hostname)"
-              fi
-              if ip link show veth-b >/dev/null 2>&1; then
-                ip link delete veth-b || true
-                echo "Deleted veth-b on $(hostname)"
-              fi
+      - name: cleanup-veth
+        image: alpine:3.20
+        securityContext:
+          privileged: true
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -eux
+
+        {{- range $network := $root.Values.topology.networks }}
+        {{- if eq $network.type "veth" }}
+        {{- $nodesWithVethpair := list }}
+        
+        {{- range $node := $root.Values.topology.nodes }}
+        {{- range $iface := .interfaces }}
+        {{- if eq $iface.network $network.name }}
+
+        {{- $nodesWithVethpair = append $nodesWithVethpair $node.name }}
+
+        {{- end }}
+        {{- end }}
+        {{- end }}
+
+        {{- if eq (len $nodesWithVethpair) 2 }}
+          {{- $vethA := printf "%s-%s" $network.name (index $nodesWithVethpair 0) }}
+          {{- $vethB := printf "%s-%s" $network.name (index $nodesWithVethpair 1) }}
+
+          if ip link show {{ $vethA }} >/dev/null 2>&1; then
+            ip link del {{ $vethA }}
+          fi
+          if ip link show {{ $vethB }} >/dev/null 2>&1; then
+            ip link del {{ $vethB }}
+          fi
+
+        {{- end }}
+
+        {{- end }}
+        {{- end }}
+
       tolerations:
         - operator: Exists
+      nodeSelector:
+        kubernetes.io/os: linux
+
+{{- end }}
