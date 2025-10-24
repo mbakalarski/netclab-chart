@@ -2,8 +2,8 @@ apiVersion: v2
 name: netclab
 description: Helm chart to deploy a network lab on Kubernetes
 type: application
-version: 0.2.1
-appVersion: "0.2.1"
+version: 0.3.1
+appVersion: "0.3.1"
 
 maintainers:
 - name: M.Bakalarski
@@ -14,6 +14,7 @@ sources:
 - https://github.com/k8snetworkplumbingwg/multus-cni
 - https://github.com/open-traffic-generator/ixia-c
 - https://github.com/nokia/srlinux-container-image
+- https://github.com/FRRouting/frr
 - https://github.com/mbakalarski/netclab-chart
 - https://github.com/mbakalarski/netclab
 - https://github.com/mbakalarski/netclab-examples
