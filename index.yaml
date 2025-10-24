@@ -2,10 +2,10 @@ apiVersion: v1
 entries:
   netclab:
   - apiVersion: v2
-    appVersion: 0.3.1
-    created: "2025-10-24T14:47:29.550645279Z"
+    appVersion: 0.2.2
+    created: "2025-10-24T16:24:05.07802128Z"
     description: Helm chart to deploy a network lab on Kubernetes
-    digest: c0f06a21d0809cd46992a18564e7c3e8ca32eb70e9c9377db59aacd83a2163e6
+    digest: 8d29733f5ca01a02e1edf7fe6b420c5a97ef20aa479fbfca54d97f0d36219868
     home: https://github.com/mbakalarski
     keywords:
     - kind
@@ -29,12 +29,11 @@ entries:
     - https://github.com/k8snetworkplumbingwg/multus-cni
     - https://github.com/open-traffic-generator/ixia-c
     - https://github.com/nokia/srlinux-container-image
-    - https://github.com/FRRouting/frr
     - https://github.com/mbakalarski/netclab-chart
     - https://github.com/mbakalarski/netclab
     - https://github.com/mbakalarski/netclab-examples
     type: application
     urls:
-    - https://mbakalarski.github.io/netclab-chart/netclab-0.3.1.tgz
-    version: 0.3.1
-generated: "2025-10-24T14:47:29.549289155Z"
+    - https://mbakalarski.github.io/netclab-chart/netclab-0.2.2.tgz
+    version: 0.2.2
+generated: "2025-10-24T16:24:05.076756632Z"
