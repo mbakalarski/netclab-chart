@@ -8,12 +8,11 @@ kind: DaemonSet
 metadata:
   name: veth-cleanup
   labels:
-  app: veth-cleanup
-  {{- include "netclab.labels" $root | nindent 4 }}
+    app: veth-cleanup
+    {{- include "netclab.labels" $root | nindent 4 }}
   annotations:
     helm.sh/hook: post-delete
     helm.sh/hook-weight: "-5"
-    helm.sh/hook-delete-policy: "hook-succeeded"
 spec:
   selector:
     matchLabels:
@@ -23,9 +22,9 @@ spec:
       labels:
         app: veth-cleanup
     spec:
+      terminationGracePeriodSeconds: 0
       hostNetwork: true
       hostPID: true
-      restartPolicy: Never
       containers:
       - name: cleanup-veth
         image: alpine:3.20
@@ -38,7 +37,7 @@ spec:
           set -eux
 
         {{- range $network := $root.Values.topology.networks }}
-        {{- if eq $network.type "veth" }}
+        {{- if eq (index $networkTypeMap $network.name) "veth" }}
         {{- $nodesWithVethpair := list }}
         
         {{- range $node := $root.Values.topology.nodes }}
@@ -66,7 +65,7 @@ spec:
 
         {{- end }}
         {{- end }}
-
+          sleep infinity  # keep pod alive to prevent restart
       tolerations:
         - operator: Exists
       nodeSelector:

@@ -5,10 +5,9 @@ topology:
     gateway: 192.168.0.254
   networks:
   - name: b1
-    type: veth
   - name: b2
+    type: bridge
   - name: b3
-    type: veth
   nodes:
   - name: h01
     type: linux

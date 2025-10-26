@@ -22,7 +22,7 @@ podAffinity:
 {{- end }}
 
 {{- define "netclab.networkTypeMap" -}}
-  {{- $networkDefaultType := "bridge" -}}
+  {{- $networkDefaultType := "veth" -}}
   {{- $networkTypeMap := dict -}}
   {{- range .Values.topology.networks -}}
     {{- $networkTypeMap = merge $networkTypeMap (dict .name (default $networkDefaultType .type)) -}}

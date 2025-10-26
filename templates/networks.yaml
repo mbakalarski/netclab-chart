@@ -1,8 +1,11 @@
 {{- if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1" }}
 {{- $root := . }}
+
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
+
 {{- range .Values.topology.networks }}
 
-{{- if eq .type "veth" }}
+{{- if eq (index $networkTypeMap .name) "veth" }}
 {{- $networkName := .name }}
 {{- range $root.Values.topology.nodes }}
 {{- $nodeName := .name }}
@@ -31,7 +34,7 @@ spec:
 {{- end}} # if eq .network $networkName
 {{- end}}  # range .interfaces
 {{- end}}  # range $root.Values.topology.nodes
-{{- else}} # if eq .type "veth"
+{{- else}} # if eq (index $networkTypeMap .name) "veth"
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
@@ -50,7 +53,7 @@ spec:
         }
       ]
     }'
-{{- end }} # if eq .type "veth"
+{{- end }} # if eq (index $networkTypeMap .name) "veth"
 
 {{- end }} # range .Values.topology.networks
 {{- else }} # if .Capabilities.APIVersions.Has "k8s.cni.cncf.io/v1"

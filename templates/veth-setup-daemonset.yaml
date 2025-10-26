@@ -23,6 +23,7 @@ spec:
       labels:
         app: veth-setup
     spec:
+      terminationGracePeriodSeconds: 0
       hostNetwork: true
       hostPID: true
       containers:
@@ -37,7 +38,7 @@ spec:
           set -eux
           
         {{- range $network := $root.Values.topology.networks }}
-        {{- if eq $network.type "veth" }}
+        {{- if eq (index $networkTypeMap $network.name) "veth" }}
         {{- $nodesWithVethpair := list }}
         
         {{- range $node := $root.Values.topology.nodes }}
@@ -53,6 +54,10 @@ spec:
         {{- if eq (len $nodesWithVethpair) 2 }}
           {{- $vethA := printf "%s-%s" $network.name (index $nodesWithVethpair 0) }}
           {{- $vethB := printf "%s-%s" $network.name (index $nodesWithVethpair 1) }}
+
+          if ip link show {{ $vethA }} >/dev/null 2>&1; then
+            ip link del {{ $vethA }}
+          fi
 
           if ! ip link show {{ $vethA }} >/dev/null 2>&1; then
             ip link add {{ $vethA }} type veth

@@ -21,6 +21,7 @@ metadata:
     vendor: frrouting
     {{- include "netclab.labels" $root | nindent 4 }}
 spec:
+  terminationGracePeriodSeconds: 0
   affinity:
   {{- include "netclab.podAffinity" $root | nindent 4 }}
   containers:
