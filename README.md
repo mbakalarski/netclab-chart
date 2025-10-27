@@ -52,6 +52,27 @@ helm repo update
 ```
 
 
+## Usage
+
+After installation, you can manage your topology using the YAML file.
+Pods will be created according to the topology definition.
+<br/>
+Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
+<br/>
+Avoid uppercase letters, underscores, or special characters.
+<br/>
+Configuration options are documented in the table below.
+You can override these values in your own file.
+
+| Parameter                | Description                                                  | Defaults                           |
+| ------------------------ | -------------------------------------------------------------| -----------------------------------|
+| `topology.networks.type` | Type of connection between nodes. Can be `bridge` or `veth`. | `veth`                             |
+| `topology.nodes.type`    | Type of node. Can be: `srlinux`, `frrouting`, `linux`        |                                    |
+| `topology.nodes.image`   | Container images used for topology nodes.                    | `ghcr.io/nokia/srlinux:latest`<br>`quay.io/frrouting/frr:8.4.7`<br>`bash:latest` |
+| `topology.nodes.memory`  | Memory allocation per node type.                             | srlinux: `4Gi`<br>frr: `512Mi`<br>linux: `200Mi` |
+| `topology.nodes.cpu`     | CPU allocation per node type.                                | srlinux: `2000m`<br>frr: `500m`<br>linux: `200m` |
+
+
 ## Example topology
 ```bash
 git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
@@ -86,7 +107,7 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
                          +--------+
 ```
 
-### Follow the instructions for **SRLinux** or **FRRouting**
+### Follow instructions for **SRLinux** or **FRRouting**
 
 <details>
 <summary>SRLinux details</summary>
@@ -94,22 +115,39 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 - Start nodes:
   ```bash
   helm install netclab netclab/netclab --values examples/topology-srlinux.yaml
-  kubectl get pod -o wide
+  ```
+  
+  ```bash
+  kubectl get pod
   ```
 
-- Configure the nodes (repeat if they're not ready yet):
   ```bash
-  kubectl cp ./examples/srl01.cfg srl01:srl01.cfg
-  kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
+  NAME                 READY   STATUS    RESTARTS   AGE
+  h01                  1/1     Running   0          12s
+  h02                  1/1     Running   0          12s
+  srl01                1/1     Running   0          12s
+  srl02                1/1     Running   0          12s
+  veth-setup-5x4lr     1/1     Running   0          20s
+  ```
 
-  kubectl cp ./examples/srl02.cfg srl02:srl02.cfg
-  kubectl exec srl02 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl02.cfg'
-
+- Configure nodes (repeat if they're not ready yet):
+  ```bash
   kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
   kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
 
   kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
   kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
+
+  kubectl cp ./examples/srl01.cfg srl01:/srl01.cfg
+  kubectl exec srl01 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl01.cfg'
+
+  kubectl cp ./examples/srl02.cfg srl02:/srl02.cfg
+  kubectl exec srl02 -- bash -c 'sr_cli --candidate-mode --commit-at-end < /srl02.cfg'
+  ```
+
+  ```bash
+  All changes have been committed. Leaving candidate mode.
+  All changes have been committed. Leaving candidate mode.
   ```
 
 - Test (convergence may take time):
@@ -118,8 +156,16 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
   ```
 
 - LLDP neighbor information:
-  ```
+  ```bash
   kubectl exec srl01 -- sr_cli show system lldp neighbor
+  ```
+
+  ```bash
+  +--------------+-------------------+----------------------+---------------------+------------------------+----------------------+---------------+
+  |     Name     |     Neighbor      | Neighbor System Name | Neighbor Chassis ID | Neighbor First Message | Neighbor Last Update | Neighbor Port |
+  +==============+===================+======================+=====================+========================+======================+===============+
+  | ethernet-1/1 | 00:01:03:FF:00:00 | srl02                | 00:01:03:FF:00:00   | 47 seconds ago         | 24 seconds ago       | ethernet-1/1  |
+  +--------------+-------------------+----------------------+---------------------+------------------------+----------------------+---------------+
   ```
 
 - Remove topology
@@ -135,11 +181,29 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 - Start nodes:
   ```bash
   helm install netclab netclab/netclab --values examples/topology-frrouting.yaml
-  kubectl get pod -o wide
   ```
 
-- Configure the nodes (repeat if they're not ready yet):
   ```bash
+  kubectl get pod
+  ```
+
+  ```bash
+  NAME               READY   STATUS    RESTARTS   AGE
+  frr01              1/1     Running   0          6s
+  frr02              1/1     Running   0          6s
+  h01                1/1     Running   0          6s
+  h02                1/1     Running   0          6s
+  veth-setup-znv8d   1/1     Running   0          14s
+  ```
+
+- Configure nodes (repeat if they're not ready yet):
+  ```bash
+  kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
+  kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
+  
+  kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
+  kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
+  
   kubectl exec frr01 -- ip address add 10.0.0.1/32 dev lo
   kubectl exec frr01 -- ip address replace 10.0.1.1/24 dev e1-1
   kubectl exec frr01 -- ip address replace 172.20.0.1/24 dev e1-2
@@ -157,12 +221,13 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
   kubectl exec frr02 -- /usr/lib/frr/frrinit.sh start
   kubectl cp ./examples/frr02.cfg frr02:/frr02.cfg
   kubectl exec frr02 -- vtysh -f /frr02.cfg
-  
-  kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
-  kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
-  
-  kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
-  kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
+  ```
+
+  ```bash
+  Starting watchfrr with command: '  /usr/lib/frr/watchfrr  -d  -F traditional   zebra bgpd staticd'
+  Started watchfrr
+  Starting watchfrr with command: '  /usr/lib/frr/watchfrr  -d  -F traditional   zebra bgpd staticd'
+  Started watchfrr
   ```
 
 - Test (convergence may take time):
