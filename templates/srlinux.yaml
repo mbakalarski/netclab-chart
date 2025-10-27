@@ -1,11 +1,13 @@
 {{- $root := . }}
 
-{{- $srlinux_default_img := "ghcr.io/nokia/srlinux:latest" }}
-{{- $srlinux_default_memory := "4Gi" }}
-{{- $srlinux_default_cpu := "2000m" }}
+{{- $srlinuxDefaultImg := "ghcr.io/nokia/srlinux:latest" }}
+{{- $srlinuxDefaultMemory := "4Gi" }}
+{{- $srlinuxDefaultCpu := "2000m" }}
 
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
 
-{{- range $i, $ := .Values.topology.nodes }}
+{{- range $i, $node := .Values.topology.nodes }}
+{{- $nodeName := .name }}
 {{- if eq .type "srlinux" }}
 ---
 apiVersion: v1
@@ -14,17 +16,17 @@ metadata:
   name: {{ .name }}
   annotations:
     v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
-    k8s.v1.cni.cncf.io/networks:
-    {{- $nets := list -}} {{- range .interfaces }} {{- $nets = append $nets (printf "%s@%s" .network .name) }} {{- end }} {{ join "," $nets }}
+    k8s.v1.cni.cncf.io/networks: {{ include "netclab.nodeNetworks" (dict "node" $node "networkTypeMap" $networkTypeMap) }}
   labels:
     vendor: nokia
-{{ include "netclab.labels" $root | indent 4 }}
+    {{- include "netclab.labels" $root | nindent 4 }}
 spec:
+  terminationGracePeriodSeconds: 0
   affinity:
-{{ include "netclab.podAffinity" $root | indent 4 }}
+  {{- include "netclab.podAffinity" $root | nindent 4 }}
   containers:
   - name: {{ .name }}
-    image: {{ default $srlinux_default_img .image }}
+    image: {{ default $srlinuxDefaultImg .image }}
     command:
     - /tini
     - --
@@ -42,8 +44,8 @@ spec:
       runAsGroup: 0
     resources:
       limits:
-        memory: {{ default $srlinux_default_memory .memory }}
-        cpu: {{ default $srlinux_default_cpu .cpu }}
+        memory: {{ default $srlinuxDefaultMemory .memory }}
+        cpu: {{ default $srlinuxDefaultCpu .cpu }}
     volumeMounts:
       - mountPath: /tmp/topology.yml
         subPath: topology.yml
@@ -62,7 +64,7 @@ metadata:
   name: {{ .name }}-hw
   labels:
     vendor: nokia
-{{ include "netclab.labels" $root | indent 4 }}
+    {{- include "netclab.labels" $root | nindent 4 }}
 data:
   topology.yml: |-
     # ixrd1

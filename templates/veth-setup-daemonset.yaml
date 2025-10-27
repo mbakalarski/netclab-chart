@@ -1,0 +1,81 @@
+{{- $root := . }}
+{{- if eq (include "netclab.hasVeth" .) "true" }}
+
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: veth-setup
+  labels:
+    app: veth-setup
+    {{- include "netclab.labels" $root | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: "before-hook-creation"
+spec:
+  selector:
+    matchLabels:
+      app: veth-setup
+  template:
+    metadata:
+      labels:
+        app: veth-setup
+    spec:
+      terminationGracePeriodSeconds: 0
+      hostNetwork: true
+      hostPID: true
+      containers:
+      - name: setup-veth
+        image: alpine:3.20
+        securityContext:
+          privileged: true
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -eux
+          
+        {{- range $network := $root.Values.topology.networks }}
+        {{- if eq (index $networkTypeMap $network.name) "veth" }}
+        {{- $nodesWithVethpair := list }}
+        
+        {{- range $node := $root.Values.topology.nodes }}
+        {{- range $iface := .interfaces }}
+        {{- if eq $iface.network $network.name }}
+
+        {{- $nodesWithVethpair = append $nodesWithVethpair $node.name }}
+
+        {{- end }}
+        {{- end }}
+        {{- end }}
+
+        {{- if eq (len $nodesWithVethpair) 2 }}
+          {{- $vethA := printf "%s-%s" $network.name (index $nodesWithVethpair 0) }}
+          {{- $vethB := printf "%s-%s" $network.name (index $nodesWithVethpair 1) }}
+
+          if ip link show {{ $vethA }} >/dev/null 2>&1; then
+            ip link del {{ $vethA }}
+          fi
+
+          if ! ip link show {{ $vethA }} >/dev/null 2>&1; then
+            ip link add {{ $vethA }} type veth
+            peername=$(ip link | grep "{{ $vethA }}@" | awk -F':' '{print $2}' | awk -F'@' '{print $2}')
+            ip link set dev $peername name {{ $vethB }}
+          fi
+          ip link set {{ $vethA }} up || true
+          ip link set {{ $vethB }} up || true
+
+        {{- end }}
+
+        {{- end }}
+        {{- end }}
+
+          sleep infinity  # keep pod alive to prevent restart
+      tolerations:
+      - operator: Exists
+      nodeSelector:
+        kubernetes.io/os: linux
+
+{{- end }}

@@ -6,6 +6,7 @@ topology:
   networks:
   - name: b1
   - name: b2
+    type: bridge
   - name: b3
   nodes:
   - name: h01

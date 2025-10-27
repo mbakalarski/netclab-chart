@@ -32,14 +32,14 @@ Before installing Netclab Chart, ensure the following are present:
 kind create cluster --name netclab
 ```
 
-- CNI bridge plugin:
+- CNI plugins:
 ```bash
 docker exec netclab-control-plane bash -c \
 'curl -L https://github.com/containernetworking/plugins/releases/download/v1.8.0/cni-plugins-linux-amd64-v1.8.0.tgz \
-| tar -xz -C /opt/cni/bin ./bridge'
+| tar -xz -C /opt/cni/bin ./bridge ./host-device'
 ```
 
-- Multus CNI plugin:
+- Multus plugin:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
 kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
@@ -115,6 +115,11 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 - Test (convergence may take time):
   ```bash
   kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
+  ```
+
+- LLDP neighbor information:
+  ```
+  kubectl exec srl01 -- sr_cli show system lldp neighbor
   ```
 
 - Remove topology
