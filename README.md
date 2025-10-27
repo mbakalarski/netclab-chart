@@ -61,6 +61,8 @@ Node and network names must be valid Kubernetes resource names (lowercase letter
 <br/>
 Avoid uppercase letters, underscores, or special characters.
 <br/>
+For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
+<br/>
 Configuration options are documented in the table below.
 You can override these values in your own file.
 
