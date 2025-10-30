@@ -1,28 +1,17 @@
-<h1 align = 'center'>
-    <img 
-        src = '/assets/icon.png' 
-        height = '200' 
-        width = '200' 
-        alt = 'Icon' 
-    />
-    <br>
-    Netclab Chart
-    <br>
+<h1 align="center">
+  <img src="/assets/icon.png" alt="Icon" width="200" height="200">
+  <br>
+  Netclab Chart
+  <br>
 </h1>
 
-<div align = 'center'>
-    <a href = 'https://github.com/mbakalarski/netclab-chart/'>
-        <img src = 'https://img.shields.io/github/stars/mbakalarski/netclab-chart?style=for-the-badge&color=%23cfb002'/>
-    </a>
-    <a href = 'https://github.com/mbakalarski/netclab-chart/tags'>
-        <img src = 'https://img.shields.io/github/v/tag/mbakalarski/netclab-chart?style=for-the-badge&label=version'/>
-    </a>
-    <a href = 'https://github.com/mbakalarski/netclab-chart/issues'>
-        <img src = 'https://img.shields.io/github/issues/mbakalarski/netclab-chart?style=for-the-badge&color=%23ff6f00'/>
-    </a>
-    <a href = 'https://github.com/mbakalarski/netclab-chart/pulls'>
-        <img src = 'https://img.shields.io/github/issues-pr/mbakalarski/netclab-chart?style=for-the-badge'/>
-    </a>
+<div align="center">
+
+[![GitHub Repo stars](https://img.shields.io/github/stars/mbakalarski/netclab-chart?style=for-the-badge&color=CFB002)](https://github.com/mbakalarski/netclab-chart)
+[![GitHub Tag](https://img.shields.io/github/v/tag/mbakalarski/netclab-chart?style=for-the-badge&color=007EC6)](https://github.com/mbakalarski/netclab-chart/tags)
+[![GitHub Issues](https://img.shields.io/github/issues/mbakalarski/netclab-chart?style=for-the-badge&color=FF6F00)](https://github.com/mbakalarski/netclab-chart/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/mbakalarski/netclab-chart?style=for-the-badge&color=44CC11)](https://github.com/mbakalarski/netclab-chart/pulls)
+
 </div>
 
 <br>
