@@ -2,9 +2,8 @@
 
 # Netclab chart
 
-Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.
-It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
-<br/>
+Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.<br>
+It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.<br>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
 
@@ -41,7 +40,7 @@ docker exec netclab-control-plane bash -c \
 | tar -xz -C /opt/cni/bin ./bridge ./host-device'
 ```
 
-- Multus plugin:
+- Multus CNI plugin:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
 kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
@@ -58,13 +57,13 @@ helm repo update
 
 After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
-<br/>
+<br>
 Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
-<br/>
+<br>
 Avoid uppercase letters, underscores, or special characters.
-<br/>
-For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
-<br/>
+<br>
+Interface naming conventions differ per vendor. See the topology definitions in the examples folder.
+<br>
 Configuration options are documented in the table below.
 You can override these values in your own file.
 
@@ -86,28 +85,28 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 +--------+
 | h01    |
 |        |
-|    e1  |
+|        |
 +--------+
     |
     b2
     |
 +-----------+          +-----------+
-|   2(4)    |          | srl02 or  |
+|           |          | srl02 or  |
 |           |          | frr02 or  |
-|           |          | sonic     |
+|           |          | sonic02   |
 |           |          |           |
-|      1(0) | -- b1 -- | 1(0)      |
+|           | -- b1 -- |           |
 |           |          |           |
 |           |          |           |
 | srl01 or  |          |           |
 | frr01 or  |          |           |
-| sonic     |          |     2(4)  |
+| sonic01   |          |           |
 +-----------+          +-----------+
                               |
                               b3
                               |
                          +--------+
-                         |     e1 |
+                         |        |
                          |        |
                          | h02    |
                          +--------+
