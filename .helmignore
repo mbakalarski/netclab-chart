@@ -1,0 +1,12 @@
+.git/
+.github/
+.gitattributes
+.idea/
+.vscode/
+*.log
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+examples/
+debug/
