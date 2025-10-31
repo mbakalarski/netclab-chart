@@ -1,3 +1,5 @@
+![Downloads](https://img.shields.io/github/downloads/mbakalarski/netclab-chart/total?label=Helm%20chart%20downloads)
+
 # Netclab chart
 
 Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.
