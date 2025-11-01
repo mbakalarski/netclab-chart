@@ -75,7 +75,7 @@ helm repo update
 After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
 
-> [!WARNING]
+> [!NOTE]
 > Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
 > Avoid uppercase letters, underscores, or special characters.
 > For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
