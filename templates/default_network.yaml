@@ -27,9 +27,13 @@ spec:
               ]
             ],
             "routes": [
+            {{- if and (hasKey .Values.topology.default_network "private_destinations_only") (eq .Values.topology.default_network.private_destinations_only false) }}
+              { "dst": "0.0.0.0/0" }
+            {{- else }}
               { "dst": "10.0.0.0/8" },
               { "dst": "172.16.0.0/12" },
               { "dst": "192.168.0.0/16" }
+            {{- end }}
             ]
           }
         }
