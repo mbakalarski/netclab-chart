@@ -2,10 +2,10 @@ apiVersion: v1
 entries:
   netclab:
   - apiVersion: v2
-    appVersion: 0.3.3
-    created: "2025-10-31T16:14:19.531468235Z"
+    appVersion: 0.3.4
+    created: "2025-11-03T15:11:54.991391627Z"
     description: Helm chart to deploy a network lab on Kubernetes
-    digest: 36fa026318c24b20e3540f0ad6be2392aaf82ca26a6d0a45f5c6a77da6844d48
+    digest: dbc59edcd2f1e6648ac1bdb8be2b59e46471670efcde5a68b2ef3885b38f5466
     home: https://github.com/mbakalarski
     keywords:
     - kind
@@ -35,6 +35,6 @@ entries:
     - https://github.com/mbakalarski/netclab-examples
     type: application
     urls:
-    - https://github.com/mbakalarski/netclab-chart/releases/download/v0.3.3/netclab-0.3.3.tgz
-    version: 0.3.3
-generated: "2025-10-31T16:14:19.530819007Z"
+    - https://github.com/mbakalarski/netclab-chart/releases/download/v0.3.4/netclab-0.3.4.tgz
+    version: 0.3.4
+generated: "2025-11-03T15:11:54.990736503Z"
