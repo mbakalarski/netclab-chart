@@ -1,21 +1,8 @@
-<div align="center">
-<pre>
-███╗   ██╗███████╗████████╗ ██████╗██╗      █████╗ ██████╗      ██████╗██╗  ██╗ █████╗ ██████╗ ████████╗
-████╗  ██║██╔════╝╚══██╔══╝██╔════╝██║     ██╔══██╗██╔══██╗    ██╔════╝██║  ██║██╔══██╗██╔══██╗╚══██╔══╝
-██╔██╗ ██║█████╗     ██║   ██║     ██║     ███████║██████╔╝    ██║     ███████║███████║██████╔╝   ██║   
-██║╚██╗██║██╔══╝     ██║   ██║     ██║     ██╔══██║██╔══██╗    ██║     ██╔══██║██╔══██║██╔══██╗   ██║   
-██║ ╚████║███████╗   ██║   ╚██████╗███████╗██║  ██║██████╔╝    ╚██████╗██║  ██║██║  ██║██║  ██║   ██║   
-╚═╝  ╚═══╝╚══════╝   ╚═╝    ╚═════╝╚══════╝╚═╝  ╚═╝╚═════╝      ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
-</pre>
-
 [![GitHub Repo stars](https://img.shields.io/github/stars/mbakalarski/netclab-chart?style=for-the-badge&color=CFB002)](https://github.com/mbakalarski/netclab-chart)
 [![GitHub Downloads](https://img.shields.io/github/downloads/mbakalarski/netclab-chart/total?style=for-the-badge&label=HELM%20CHART%20DOWNLOADS&color=f200ff)](https://github.com/mbakalarski/netclab-chart/releases)
-
 [![GitHub Tag](https://img.shields.io/github/v/tag/mbakalarski/netclab-chart?style=for-the-badge&color=007EC6)](https://github.com/mbakalarski/netclab-chart/tags)
 [![GitHub Issues](https://img.shields.io/github/issues/mbakalarski/netclab-chart?style=for-the-badge&color=FF6F00)](https://github.com/mbakalarski/netclab-chart/issues)
 [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/mbakalarski/netclab-chart?style=for-the-badge&color=44CC11)](https://github.com/mbakalarski/netclab-chart/pulls)
-
-</div>
 
 <br>
 
