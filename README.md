@@ -81,7 +81,7 @@ You can override these values in your own file.
 
 ## 🧱 Example topology
 ```bash
-git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
+git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 ```
 
 ```
