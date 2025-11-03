@@ -1,14 +1,19 @@
-![Downloads](https://img.shields.io/github/downloads/mbakalarski/netclab-chart/total?label=Helm%20chart%20downloads)
+[![GitHub Repo stars](https://img.shields.io/github/stars/mbakalarski/netclab-chart?style=for-the-badge&color=CFB002)](https://github.com/mbakalarski/netclab-chart)
+[![GitHub Downloads](https://img.shields.io/github/downloads/mbakalarski/netclab-chart/total?style=for-the-badge&label=HELM%20CHART%20DOWNLOADS&color=f200ff)](https://github.com/mbakalarski/netclab-chart/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/mbakalarski/netclab-chart?style=for-the-badge&color=007EC6)](https://github.com/mbakalarski/netclab-chart/releases/latest)
+[![GitHub Issues](https://img.shields.io/github/issues/mbakalarski/netclab-chart?style=for-the-badge&color=FF6F00)](https://github.com/mbakalarski/netclab-chart/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/mbakalarski/netclab-chart?style=for-the-badge&color=44CC11)](https://github.com/mbakalarski/netclab-chart/pulls)
 
-# Netclab chart
+<br>
 
-Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.<br>
-It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.<br>
+## ❓ What is this?
+Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.
+It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
+<br/>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
 
-## Use Cases
-
+## ⚙️ Use cases
 This chart enables rapid deployment of containerized network topologies on Kubernetes. Key use cases include:
 - **Network design validation**: Test high- and low-level design (HLD/LLD) configurations and device behavior before committing to a final design.
 - **Test automation**: Develop and verify automation scripts for traffic or protocol generators/analyzers (e.g., IxNetwork APIs, OTG) — effectively unit-testing your test logic.
@@ -16,8 +21,7 @@ This chart enables rapid deployment of containerized network topologies on Kuber
 - **Training & certification prep**: Practice CLI, protocols, and topologies in a safe, repeatable lab — ideal for students and professionals preparing for vendor certifications.
 
 
-## Prerequisites
-
+## 📦 Prerequisites
 Before installing Netclab Chart, ensure the following are present:
 
 - [docker](https://docs.docker.com/engine/install/)
@@ -26,7 +30,7 @@ Before installing Netclab Chart, ensure the following are present:
 - [helm](https://helm.sh/docs/intro/install/)
 
 
-## Installation
+## 🚀 Installation
 
 - Kind cluster:
 ```bash
@@ -53,17 +57,16 @@ helm repo update
 ```
 
 
-## Usage
+## 🧩 Usage
 
 After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
-<br>
-Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
-<br>
-Avoid uppercase letters, underscores, or special characters.
-<br>
-Interface naming conventions differ per vendor. See the topology definitions in the examples folder.
-<br>
+
+> [!NOTE]
+> Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
+> Avoid uppercase letters, underscores, or special characters.
+> For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
+
 Configuration options are documented in the table below.
 You can override these values in your own file.
 
@@ -76,9 +79,9 @@ You can override these values in your own file.
 | `topology.nodes.cpu`     | CPU allocation per node type.                                 | srlinux: `2000m`<br>frr: `500m`<br>linux: `200m`<br>sonic: `2000m` |
 
 
-## Example topology
+## 🧱 Example topology
 ```bash
-git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
+git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 ```
 
 ```console
@@ -288,14 +291,15 @@ git clone https://github.com/mbakalarski/netclab-chart.git ; cd netclab-chart
 </details>
 
 
-## Future Plans
+## 🧭 Future Plans
 
 - Add support for additional containerized or virtualized routers
 - Replace static Helm templates with dynamic controller logic
 - Define a CRD for Topology to enable programmable lab descriptions
 
 
-## Contributing
+## 🤝 Contributing
 
-Feel free to open issues or submit PRs on:
-https://github.com/mbakalarski/netclab-chart
+Found an issue or have an idea?
+Open an issue or submit a PR at: <br>
+👉 [https://github.com/mbakalarski/netclab-chart](https://github.com/mbakalarski/netclab-chart)
