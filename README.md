@@ -9,7 +9,7 @@
 ## ❓ What is this?
 Helm chart for automating the deployment of virtual network topologies on Kubernetes using Pods with multiple interfaces.
 It leverages the [Multus CNI](https://github.com/k8snetworkplumbingwg/multus-cni) plugin and renders the required Kubernetes resources (e.g., ConfigMaps, Pods, NetworkAttachmentDefinitions) from a structured YAML-based topology definition.
-<br/>
+<br>
 Use it to quickly bring up containerized network labs for testing, automation, development, and education — all within your cluster.
 
 
@@ -272,16 +272,18 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   ```bash
   kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
   kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
-  
+
   kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
   kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 
-  kubectl exec sonic01 -- config interface shutdown Ethernet0  
+  kubectl exec sonic01 -- bash -c "apt-get update && apt-get install sudo"
+  kubectl exec sonic01 -- config interface shutdown Ethernet0
   kubectl exec sonic01 -- config interface startup Ethernet0
   kubectl exec sonic01 -- config interface startup Ethernet4
   kubectl exec sonic01 -- config interface ip add Ethernet0 10.0.1.1/24
   kubectl exec sonic01 -- config interface ip add Ethernet4 172.20.0.1/24
 
+  kubectl exec sonic02 -- bash -c "apt-get update && apt-get install sudo"
   kubectl exec sonic02 -- config interface shutdown Ethernet0
   kubectl exec sonic02 -- config interface startup Ethernet0
   kubectl exec sonic02 -- config interface startup Ethernet4

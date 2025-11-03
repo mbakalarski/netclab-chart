@@ -1,12 +1,7 @@
 .git/
 .github/
 .gitattributes
-.idea/
 .vscode/
+examples/
 *.log
 *.tmp
-*.swp
-.DS_Store
-Thumbs.db
-examples/
-debug/
