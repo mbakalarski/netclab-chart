@@ -24,7 +24,7 @@ kind: Pod
 metadata:
   name: otg-port-{{ $k }}
   annotations:
-    v1.multus-cni.io/default-network: {{ $root.Values.topology.default_network.name }}
+    v1.multus-cni.io/default-network: {{ printf "%s-%s" $root.Release.Name $root.Values.topology.default_network.name }}
   labels:
     app: ixia-c
     role: port-{{ $k }}
