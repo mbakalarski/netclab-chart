@@ -31,20 +31,23 @@ podAffinity:
 {{- end -}}
 
 {{- /*
-Return the joined networks string for a given node and the networkTypeMap
+Return the joined networks string for a given node and the networkTypeMap,
+networks prefixed with .Release.Name
 Expected inputs:
 - .node: the node object (with interfaces and name)
 - .networkTypeMap: map of network name -> network type
+- .root: full context
 */ -}}
 {{- define "netclab.nodeNetworks" -}}
   {{- $node := .node -}}
   {{- $networkTypeMap := .networkTypeMap -}}
+  {{- $root := .root -}}
   {{- $nets := list -}}
   {{- range $iface := $node.interfaces -}}
     {{- if eq (index $networkTypeMap $iface.network) "veth" }}
-      {{- $nets = append $nets (printf "%s-%s@%s" $iface.network $node.name $iface.name) }}
+      {{- $nets = append $nets (printf "%s-%s-%s@%s" $root.Release.Name $iface.network $node.name $iface.name) }}
     {{- else }}
-      {{- $nets = append $nets (printf "%s@%s" $iface.network $iface.name) }}
+      {{- $nets = append $nets (printf "%s-%s@%s" $root.Release.Name $iface.network $iface.name) }}
     {{- end }}
   {{- end }}
   {{- join "," $nets }}

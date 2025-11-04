@@ -11,21 +11,21 @@
 {{- $nodeName := .name }}
 {{- range .interfaces }}
 {{- if eq .network $networkName }}
-{{- $deviceName := printf "%s-%s" $networkName $nodeName }}
+{{- $hostDeviceName := printf "%s-%s-%s" $root.Release.Name $networkName $nodeName }}
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: {{ $deviceName }}
+  name: {{ $hostDeviceName }}
   labels: {{- include "netclab.labels" $root | nindent 4 }}
 spec:
   config: '{
       "cniVersion": "0.3.1",
-      "name": "{{ $deviceName }}",
+      "name": "{{ $hostDeviceName }}",
       "plugins": [
         {
           "type": "host-device",
-          "device": "{{ $deviceName }}",
+          "device": "{{ $hostDeviceName }}",
           "ipam": {}
         }
       ]
@@ -35,20 +35,21 @@ spec:
 {{- end}}  # range .interfaces
 {{- end}}  # range $root.Values.topology.nodes
 {{- else}} # if eq (index $networkTypeMap .name) "veth"
+{{- $hostBridgeName := printf "%s-%s" $root.Release.Name .name }}
 ---
 apiVersion: "k8s.cni.cncf.io/v1"
 kind: NetworkAttachmentDefinition
 metadata:
-  name: {{ .name }}
+  name: {{ $hostBridgeName }}
   labels: {{- include "netclab.labels" $root | nindent 4 }}
 spec:
   config: '{
       "cniVersion": "0.3.1",
-      "name": "{{ .name }}",
+      "name": "{{ $hostBridgeName }}",
       "plugins": [
         {
           "type": "bridge",
-          "bridge": "{{ .name }}",
+          "bridge": "{{ $hostBridgeName }}",
           "ipam": {}
         }
       ]

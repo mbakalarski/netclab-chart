@@ -62,9 +62,9 @@ helm repo update
 After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
 
-> [!NOTE]
-> Node and network names must be valid Kubernetes resource names (lowercase letters, numbers, and -) and also acceptable as Linux interface names.
-> Avoid uppercase letters, underscores, or special characters.
+> **Note:**<br>
+> Node and network names must be valid Kubernetes resource names and also acceptable as Linux interface names.<br>
+> Avoid uppercase letters, underscores, or special characters.<br>
 > For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
 
 Configuration options are documented in the table below.
@@ -84,7 +84,7 @@ You can override these values in your own file.
 git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 ```
 
-```
+```console
 +--------+
 | h01    |
 |        |
@@ -113,14 +113,18 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
                          +--------+
 ```
 
-### Follow instructions for **SRLinux** or **FRRouting**
+### Follow instructions for **SRLinux** or/and **FRRouting**
+
+> **Note:** The topologies are independent and can run in separate Kubernetes namespaces.
+
 
 <details>
 <summary>SRLinux details</summary>
 
 - Start nodes:
   ```bash
-  helm install netclab netclab/netclab --values examples/topology-srlinux.yaml
+  helm install dc1 netclab/netclab --values ./examples/topology-srlinux.yaml --namespace dc1-ns --create-namespace
+  kubectl config set-context --current --namespace dc1-ns
   ```
   
   ```bash
@@ -133,7 +137,6 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   h02                  1/1     Running   0          12s
   srl01                1/1     Running   0          12s
   srl02                1/1     Running   0          12s
-  veth-setup-5x4lr     1/1     Running   0          20s
   ```
 
 - Configure nodes (repeat if they're not ready yet):
@@ -173,11 +176,6 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   | ethernet-1/1 | 00:01:03:FF:00:00 | srl02                | 00:01:03:FF:00:00   | 47 seconds ago         | 24 seconds ago       | ethernet-1/1  |
   +--------------+-------------------+----------------------+---------------------+------------------------+----------------------+---------------+
   ```
-
-- Remove topology
-  ```bash
-  helm uninstall netclab
-  ```
 </details>
 
 
@@ -186,7 +184,8 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 
 - Start nodes:
   ```bash
-  helm install netclab netclab/netclab --values examples/topology-frrouting.yaml
+  kubectl config set-context --current --namespace default
+  helm install dc2 netclab/netclab --values examples/topology-frrouting.yaml
   ```
 
   ```bash
@@ -199,7 +198,6 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   frr02              1/1     Running   0          6s
   h01                1/1     Running   0          6s
   h02                1/1     Running   0          6s
-  veth-setup-znv8d   1/1     Running   0          14s
   ```
 
 - Configure nodes (repeat if they're not ready yet):
@@ -240,12 +238,26 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   ```bash
   kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
   ```
+</details>
 
-- Remove topology
+<details>
+<summary>Uninstall topologies</summary>
+
+- dc1:
   ```bash
-  helm uninstall netclab
+  helm uninstall dc1 --namespace dc1-ns
+  kubectl delete ns dc1-ns
+  ```
+- dc2:
+  ```bash
+  helm uninstall dc2 --namespace default
+  ```
+- reset default context:
+  ```
+  kubectl config set-context --current --namespace default
   ```
 </details>
+
 
 ## 🧭 Future Plans
 
