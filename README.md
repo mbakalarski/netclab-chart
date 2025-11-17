@@ -262,8 +262,6 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 ## 🧭 Future Plans
 
 - Add support for additional containerized or virtualized routers
-- Replace static Helm templates with dynamic controller logic
-- Define a CRD for Topology to enable programmable lab descriptions
 
 
 ## 🤝 Contributing
