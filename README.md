@@ -63,9 +63,13 @@ After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
 
 > **Note:**<br>
-> Node and network names must be valid Kubernetes resource names and also acceptable as Linux interface names.<br>
-> Avoid uppercase letters, underscores, or special characters.<br>
-> For SR Linux nodes, interface names in the YAML configuration must follow the format e1-x (for example, e1-1, e1-2, etc.).
+> Node and network names must be lowercase letters, digits, or hyphens.<br>
+> Host interface names must be **< 15 characters**.<br>
+> NETCLab builds names as `<release>-<network>-<node>`.<br>
+> Too long → Linux rejects: `Error: Attribute failed policy validation.`<br>
+> Example: `netclab-b1-ceos01` (17 chars, invalid).<br>
+> Use short names (e.g., `dc1` for release).<br>
+
 
 Configuration options are documented in the table below.
 You can override these values in your own file.
@@ -73,10 +77,24 @@ You can override these values in your own file.
 | Parameter                | Description                                                  | Defaults                           |
 | ------------------------ | -------------------------------------------------------------| -----------------------------------|
 | `topology.networks.type` | Type of connection between nodes. Can be `bridge` or `veth`. | `veth`                             |
-| `topology.nodes.type`    | Type of node. Can be: `srlinux`, `frrouting`, `linux`        |                                    |
-| `topology.nodes.image`   | Container images used for topology nodes.                    | `ghcr.io/nokia/srlinux:latest`<br>`quay.io/frrouting/frr:8.4.7`<br>`bash:latest` |
+| `topology.nodes.type`    | Type of node. Can be: `srlinux`, `frrouting`, `ceos`, `linux`|                                    |
+| `topology.nodes.image`   | Container images used for topology nodes.                    | `ghcr.io/nokia/srlinux:latest`<br>`quay.io/frrouting/frr:8.4.7`<br>`docker.io/library/ceos:4.35.0F`<br>`bash:latest` |
 | `topology.nodes.memory`  | Memory allocation per node type.                             | srlinux: `4Gi`<br>frr: `512Mi`<br>linux: `200Mi` |
 | `topology.nodes.cpu`     | CPU allocation per node type.                                | srlinux: `2000m`<br>frr: `500m`<br>linux: `200m` |
+
+<br>
+
+> **Note:**<br>
+> To start cEOS routers, download the cEOS image from Arista Networks and import it into your cluster:
+> ```bash
+> docker import cEOS-lab.tar.xz ceos:4.35.0F
+> kind load docker-image ceos:4.35.0F -n netclab
+> ```
+> After loading, you can verify the image with:
+> ```bash
+> docker exec netclab-control-plane crictl images | grep ceos
+> docker.io/library/ceos                          4.35.0F              210ad7c6619cb       2.62GB
+> ```
 
 
 ## 🧱 Example topology
@@ -113,7 +131,7 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
                          +--------+
 ```
 
-### Follow instructions for **SRLinux** or/and **FRRouting**
+### Follow instructions for **SRLinux** or/and **FRRouting** or/and **cEOS**
 
 > **Note:** The topologies are independent and can run in separate Kubernetes namespaces.
 
@@ -123,8 +141,7 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 
 - Start nodes:
   ```bash
-  helm install dc1 netclab/netclab --values ./examples/topology-srlinux.yaml --namespace dc1-ns --create-namespace
-  kubectl config set-context --current --namespace dc1-ns
+  helm install dc1 netclab/netclab --values ./examples/topology-srlinux.yaml
   ```
   
   ```bash
@@ -184,8 +201,8 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 
 - Start nodes:
   ```bash
-  kubectl config set-context --current --namespace default
-  helm install dc2 netclab/netclab --values examples/topology-frrouting.yaml
+  helm install dc2 netclab/netclab --values examples/topology-frrouting.yaml  --namespace dc2 --create-namespace
+  kubectl config set-context --current --namespace dc2
   ```
 
   ```bash
@@ -240,21 +257,62 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   ```
 </details>
 
+
+<details>
+<summary>cEOS details</summary>
+
+- Start nodes:
+  ```bash
+  helm install dc3 netclab/netclab --values examples/topology-ceos.yaml  --namespace dc3 --create-namespace
+  kubectl config set-context --current --namespace dc3
+  ```
+
+  ```bash
+  kubectl get pod
+  ```
+
+  ```bash
+  NAME     READY   STATUS    RESTARTS   AGE
+  ceos01   1/1     Running   0          8s
+  ceos02   1/1     Running   0          8s
+  h01      1/1     Running   0          8s
+  h02      1/1     Running   0          8s
+  ```
+
+- Configure nodes (repeat if they're not ready yet):
+  ```bash
+  kubectl exec h01 -- ip address replace 172.20.0.2/24 dev e1
+  kubectl exec h01 -- ip route replace 172.30.0.0/24 via 172.20.0.1
+
+  kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
+  kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
+
+  kubectl cp ./examples/ceos01.cfg ceos01:/mnt/flash/ceos01.cfg
+  kubectl exec ceos01 -- bash -c 'Cli /ceos01.cfg'
+
+  kubectl cp ./examples/ceos02.cfg ceos02:/mnt/flash/ceos02.cfg
+  kubectl exec ceos02 -- bash -c 'Cli /ceos02.cfg'
+  ```
+</details>
+
+
 <details>
 <summary>Uninstall topologies</summary>
 
-- dc1:
+- dc3:
   ```bash
-  helm uninstall dc1 --namespace dc1-ns
-  kubectl delete ns dc1-ns
+  kubectl config set-context --current --namespace default
+  helm uninstall dc3 --namespace dc3
+  kubectl delete ns dc3
   ```
 - dc2:
   ```bash
-  helm uninstall dc2 --namespace default
+  helm uninstall dc2 --namespace dc3
+  kubectl delete ns dc2
   ```
-- reset default context:
-  ```
-  kubectl config set-context --current --namespace default
+- dc1:
+  ```bash
+  helm uninstall dc2
   ```
 </details>
 

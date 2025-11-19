@@ -1,0 +1,61 @@
+{{- $root := . }}
+
+{{- $ceosDefaultImg := "docker.io/library/ceos:4.35.0F" }}
+{{- $ceosDefaultMemory := "4Gi" }}
+{{- $ceosDefaultCpu := "2000m" }}
+
+{{- $networkTypeMap := include "netclab.networkTypeMap" $root | fromYaml }}
+
+{{- range $i, $node := .Values.topology.nodes }}
+{{- $nodeName := .name }}
+{{- if eq .type "ceos" }}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .name }}
+  annotations:
+    v1.multus-cni.io/default-network: {{ printf "%s-%s" $root.Release.Name $root.Values.topology.default_network.name }}
+    k8s.v1.cni.cncf.io/networks: {{ include "netclab.nodeNetworks" (dict "node" $node "networkTypeMap" $networkTypeMap "root" $root) }}
+  labels:
+    vendor: arista
+    {{- include "netclab.labels" $root | nindent 4 }}
+spec:
+  terminationGracePeriodSeconds: 0
+  affinity:
+  {{- include "netclab.podAffinity" $root | nindent 4 }}
+  containers:
+  - name: {{ .name }}
+    image: {{ default $ceosDefaultImg .image }}
+    env:
+    - name: INTFTYPE
+      value: eth
+    - name: ETBA
+      value: "1"
+    - name: SKIP_ZEROTOUCH_BARRIER_IN_SYSDBINIT
+      value: "1"
+    - name: CEOS
+      value: "1"
+    - name: EOS_PLATFORM
+      value: ceoslab
+    - name: container
+      value: docker
+    command:
+    - /sbin/init
+    - systemd.setenv=INTFTYPE=eth
+    - systemd.setenv=ETBA=1
+    - systemd.setenv=SKIP_ZEROTOUCH_BARRIER_IN_SYSDBINIT
+    - systemd.setenv=CEOS=1
+    - systemd.setenv=EOS_PLATFORM=ceoslab
+    - systemd.setenv=container=docker
+    securityContext:
+      privileged: true
+      runAsUser: 0
+      runAsGroup: 0
+    resources:
+      limits:
+        memory: {{ default $ceosDefaultMemory .memory }}
+        cpu: {{ default $ceosDefaultCpu .cpu }}
+
+{{- end }}
+{{- end }}
