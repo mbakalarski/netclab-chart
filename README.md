@@ -37,14 +37,14 @@ Before installing Netclab Chart, ensure the following are present:
 kind create cluster --name netclab
 ```
 
-- CNI plugins:
+- CNI plugins (bridge and host-device):
 ```bash
 docker exec netclab-control-plane bash -c \
 'curl -L https://github.com/containernetworking/plugins/releases/download/v1.8.0/cni-plugins-linux-amd64-v1.8.0.tgz \
 | tar -xz -C /opt/cni/bin ./bridge ./host-device'
 ```
 
-- Multus plugin:
+- Multus CNI plugin:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-cni/master/deployments/multus-daemonset.yml
 kubectl -n kube-system wait --for=jsonpath='{.status.numberReady}'=1 --timeout=5m daemonset.apps/kube-multus-ds
@@ -63,12 +63,12 @@ After installation, you can manage your topology using the YAML file.
 Pods will be created according to the topology definition.
 
 > **Note:**<br>
-> Node and network names must be lowercase letters, digits, or hyphens.<br>
-> Host interface names must be **< 15 characters**.<br>
-> NETCLab builds names as `<release>-<network>-<node>`.<br>
-> Too long → Linux rejects: `Error: Attribute failed policy validation.`<br>
-> Example: `netclab-b1-ceos01` (17 chars, invalid).<br>
-> Use short names (e.g., `dc1` for release).<br>
+> Node and network names must use lowercase letters, digits, or hyphens.<br>
+> Host interface names must be **< 15 characters**,<br>
+> and netclab uses combined names internally as `<release>-<network>-<node>`.<br>
+> If the name is too long, Linux rejects it with: `Error: Attribute failed policy validation.`<br>
+> Example (invalid, 17 chars): `dcnet01-b1-ceos01`.<br>
+> Use a short name for the Helm release (e.g., `dc1`).<br>
 
 
 Configuration options are documented in the table below.
@@ -98,6 +98,9 @@ You can override these values in your own file.
 
 
 ## 🧱 Example topology
+
+To make the topology and config files easy to reach:
+
 ```bash
 git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
 ```
@@ -113,13 +116,17 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
     |
 +-----------+          +-----------+
 | e1-2      |          | srl02 or  |
-|           |          | frr02     |
+| or eth2   |          | frr02 or  |
+|           |          | ceos02    |
+|           |          |           |
 |           |          |           |
 |       e1-1| -- b1 -- | e1-1      |
+|    or eth1|          | or eth1   |
 |           |          |           |
 |           |          |           |
 | srl01 or  |          |           |
-| frr01     |          |     e1-2  |
+| frr01 or  |          |     e1-2  |
+| ceos01    |          |  or eth2  |
 +-----------+          +-----------+
                               |
                               b3
@@ -287,11 +294,33 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   kubectl exec h02 -- ip address replace 172.30.0.2/24 dev e1
   kubectl exec h02 -- ip route replace 172.20.0.0/24 via 172.30.0.1
 
-  kubectl cp ./examples/ceos01.cfg ceos01:/mnt/flash/ceos01.cfg
-  kubectl exec ceos01 -- bash -c 'Cli /ceos01.cfg'
+  kubectl cp ./examples/ceos01.cfg ceos01:/ceos01.cfg
+  kubectl exec ceos01 -- bash -c 'Cli -p 15 /ceos01.cfg'
 
-  kubectl cp ./examples/ceos02.cfg ceos02:/mnt/flash/ceos02.cfg
-  kubectl exec ceos02 -- bash -c 'Cli /ceos02.cfg'
+  kubectl cp ./examples/ceos02.cfg ceos02:/ceos02.cfg
+  kubectl exec ceos02 -- bash -c 'Cli -p 15 /ceos02.cfg'
+  ```
+
+- Test (convergence may take time):
+  ```bash
+  kubectl exec h01 -- ping 172.30.0.2 -I 172.20.0.2
+  ```
+
+- LLDP neighbor information:
+  ```bash
+  kubectl exec -ti ceos01 -- Cli -p 15 -c "show lldp neighbors"
+  ```
+
+  ```bash
+  Last table change time   : 0:00:48 ago
+  Number of table inserts  : 1
+  Number of table deletes  : 0
+  Number of table drops    : 0
+  Number of table age-outs : 0
+  
+  Port Neighbor Device ID Neighbor Port ID TTL
+  ---- ------------------ ---------------- ---
+  Et1  ceos02             Ethernet1        120
   ```
 </details>
 
@@ -307,12 +336,12 @@ git clone https://github.com/mbakalarski/netclab-chart.git && cd netclab-chart
   ```
 - dc2:
   ```bash
-  helm uninstall dc2 --namespace dc3
+  helm uninstall dc2 --namespace dc2
   kubectl delete ns dc2
   ```
 - dc1:
   ```bash
-  helm uninstall dc2
+  helm uninstall dc1
   ```
 </details>
 
