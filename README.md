@@ -79,21 +79,21 @@ You can override these values in your own file.
 | `topology.networks.type` | Type of connection between nodes. Can be `bridge` or `veth`. | `veth`                             |
 | `topology.nodes.type`    | Type of node. Can be: `srlinux`, `frrouting`, `ceos`, `linux`|                                    |
 | `topology.nodes.image`   | Container images used for topology nodes.                    | `ghcr.io/nokia/srlinux:latest`<br>`quay.io/frrouting/frr:8.4.7`<br>`docker.io/library/ceos:4.35.0F`<br>`bash:latest` |
-| `topology.nodes.memory`  | Memory allocation per node type.                             | srlinux: `4Gi`<br>frr: `512Mi`<br>linux: `200Mi` |
-| `topology.nodes.cpu`     | CPU allocation per node type.                                | srlinux: `2000m`<br>frr: `500m`<br>linux: `200m` |
+| `topology.nodes.memory`  | Memory allocation per node type.                             | srlinux: `4Gi`<br>frr: `512Mi`<br>ceos: `4Gi`<br>linux: `200Mi` |
+| `topology.nodes.cpu`     | CPU allocation per node type.                                | srlinux: `2000m`<br>frr: `500m`<br>ceos: `2000m`<br>linux: `200m` |
 
 <br>
 
 > **Note:**<br>
 > To start cEOS routers, download the cEOS image from Arista Networks and import it into your cluster:
 > ```bash
-> docker import cEOS-lab.tar.xz ceos:4.35.0F
+> docker import ./cEOS64-lab-4.35.0F.tar.tar ceos:4.35.0F
 > kind load docker-image ceos:4.35.0F -n netclab
 > ```
 > After loading, you can verify the image with:
 > ```bash
 > docker exec netclab-control-plane crictl images | grep ceos
-> docker.io/library/ceos                          4.35.0F              210ad7c6619cb       2.62GB
+> docker.io/library/ceos                          4.35.0F              94352c08ca85f       882MB
 > ```
 
 

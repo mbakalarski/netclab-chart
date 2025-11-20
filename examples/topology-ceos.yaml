@@ -20,6 +20,8 @@ topology:
       network: b3
   - name: ceos01
     type: ceos
+    memory: 2Gi
+    cpu: 1000m
     interfaces:
     - name: eth1
       network: b1
@@ -27,6 +29,8 @@ topology:
       network: b2
   - name: ceos02
     type: ceos
+    memory: 2Gi
+    cpu: 1000m
     interfaces:
     - name: eth1
       network: b1
