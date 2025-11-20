@@ -5,6 +5,7 @@ topology:
     gateway: 192.168.0.254
   networks:
   - name: b1
+    type: bridge
   nodes:
   - name: srl01
     type: srlinux
