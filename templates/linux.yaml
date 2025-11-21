@@ -15,15 +15,15 @@ kind: Pod
 metadata:
   name: {{ .name }}
   labels:
-  {{- include "netclab.labels" $root | nindent 4 }}
-  {{ $root.Chart.Name }}/pod-name: {{ .name }}
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
   annotations:
     v1.multus-cni.io/default-network: {{ printf "%s-%s" $root.Release.Name $root.Values.topology.default_network.name }}
     k8s.v1.cni.cncf.io/networks: {{ include "netclab.nodeNetworks" (dict "node" $node "networkTypeMap" $networkTypeMap "root" $root) }}
 spec:
   terminationGracePeriodSeconds: 0
   affinity:
-  {{- include "netclab.podAffinity" $root | nindent 4 }}
+    {{- include "netclab.podAffinity" $root | nindent 4 }}
   containers:
   - image: {{ default $linuxDefaultImg .image }}
     name: {{ .name }}

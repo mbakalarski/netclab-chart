@@ -22,7 +22,7 @@ topology:
   - name: srl01
     type: srlinux
     memory: 2Gi
-    cpu: 500m
+    cpu: 1000m
     interfaces:
     - name: e1-1
       network: b1
@@ -31,7 +31,7 @@ topology:
   - name: srl02
     type: srlinux
     memory: 2Gi
-    cpu: 500m
+    cpu: 1000m
     interfaces:
     - name: e1-1
       network: b1
