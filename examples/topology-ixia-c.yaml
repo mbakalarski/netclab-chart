@@ -1,8 +1,4 @@
 topology:
-  default_network:
-    name: b0
-    subnet: 10.10.0.0/24
-    gateway: 10.10.0.254
   networks:
   - name: b1
   - name: b2

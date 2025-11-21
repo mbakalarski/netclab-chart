@@ -1,9 +1,4 @@
 topology:
-  default_network:
-    name: b0
-    subnet: 192.168.0.0/24
-    gateway: 192.168.0.254
-    private_destinations_only: false
   networks:
   - name: b1
   - name: b2
