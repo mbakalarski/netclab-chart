@@ -20,6 +20,7 @@ metadata:
   labels:
     vendor: frrouting
     {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
 spec:
   terminationGracePeriodSeconds: 0
   affinity:
@@ -39,6 +40,25 @@ spec:
       limits:
         memory: {{ default $frroutingDefaultMemory .memory }}
         cpu: {{ default $frroutingDefaultCpu .cpu }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    vendor: frrouting
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  name: {{ .name }}
+spec:
+  selector:
+    vendor: frrouting
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  ports:
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: 22
 
 {{- end }}
 {{- end }}

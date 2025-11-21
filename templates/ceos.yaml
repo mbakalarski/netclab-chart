@@ -20,6 +20,7 @@ metadata:
   labels:
     vendor: arista
     {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
 spec:
   terminationGracePeriodSeconds: 0
   affinity:
@@ -56,6 +57,29 @@ spec:
       limits:
         memory: {{ default $ceosDefaultMemory .memory }}
         cpu: {{ default $ceosDefaultCpu .cpu }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    vendor: arista
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  name: {{ .name }}
+spec:
+  selector:
+    vendor: arista
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  ports:
+  - name: api
+    protocol: TCP
+    port: 6020
+    targetPort: 6020
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: 22
 
 {{- end }}
 {{- end }}

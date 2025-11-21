@@ -16,6 +16,7 @@ metadata:
   name: {{ .name }}
   labels:
   {{- include "netclab.labels" $root | nindent 4 }}
+  {{ $root.Chart.Name }}/pod-name: {{ .name }}
   annotations:
     v1.multus-cni.io/default-network: {{ printf "%s-%s" $root.Release.Name $root.Values.topology.default_network.name }}
     k8s.v1.cni.cncf.io/networks: {{ include "netclab.nodeNetworks" (dict "node" $node "networkTypeMap" $networkTypeMap "root" $root) }}
@@ -39,6 +40,23 @@ spec:
       limits:
         cpu: {{ default $linuxDefaultCpu .cpu }}
         memory: {{ default $linuxDefaultMemory .memory }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  name: {{ .name }}
+spec:
+  selector:
+    {{- include "netclab.labels" $root | nindent 4 }}
+    {{ $root.Chart.Name }}/pod-name: {{ .name }}
+  ports:
+  - name: ssh
+    protocol: TCP
+    port: 22
+    targetPort: 22
 
 {{- end }}
 {{- end }}
