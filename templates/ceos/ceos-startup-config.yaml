@@ -8,7 +8,7 @@ data:
     username arista privilege 15 secret 0 arista
     !
     management api http-commands
-      protocol http port 6021
+      protocol https
       no shutdown
     !
     management security
@@ -49,7 +49,6 @@ data:
        260 permit udp any any eq lsp-ping
        270 permit udp any eq lsp-ping any range 51900 51999
        280 permit tcp any any eq 6020
-       290 permit tcp any any eq 6021
     !
     system control-plane
        ip access-group custom-cp in

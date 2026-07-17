@@ -2,8 +2,8 @@ apiVersion: v2
 name: netclab
 description: Helm chart to deploy a network lab on Kubernetes
 type: application
-version: 0.5.8
-appVersion: "0.5.8"
+version: 0.5.9
+appVersion: "0.5.9"
 
 maintainers:
 - name: M.Bakalarski
