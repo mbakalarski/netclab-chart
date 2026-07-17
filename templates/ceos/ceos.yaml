@@ -87,10 +87,10 @@ spec:
     protocol: TCP
     port: 6020
     targetPort: 6020
-  - name: jsonrpc
+  - name: eapi
     protocol: TCP
-    port: 6021
-    targetPort: 6021
+    port: 443
+    targetPort: 443
   - name: ssh
     protocol: TCP
     port: 22
@@ -127,7 +127,7 @@ spec:
         - |
             echo "Attempting certificate generation..."
 
-            if ! curl -s -u arista:arista http://{{ .name }}:6021/command-api \
+            if ! curl -sk -u arista:arista https://{{ .name }}/command-api \
                  -H "Content-Type: application/json" \
                  -d @/tmp/cmds ; then
               echo "Curl failed, exiting with error"
