@@ -125,16 +125,53 @@ spec:
         - /bin/sh
         - -c
         - |
-            echo "Attempting certificate generation..."
+            post() {
+              curl -sk --fail-with-body -u arista:arista \
+                   https://{{ .name }}/command-api \
+                   -H "Content-Type: application/json" -d @"$1"
+            }
 
-            if ! curl -sk -u arista:arista https://{{ .name }}/command-api \
-                 -H "Content-Type: application/json" \
-                 -d @/tmp/cmds ; then
-              echo "Curl failed, exiting with error"
-              exit 1
-            fi
+            # Wait for the device here rather than by exiting and letting the
+            # Job restart the container. With restartPolicy OnFailure the whole
+            # cEOS boot has to fit inside backoffLimit restarts of a growing
+            # backoff -- a budget that depends on how fast the node boots, and
+            # that a slow device silently loses. Waiting in one attempt makes
+            # the timeout explicit and leaves backoffLimit for real failures.
+            deadline=$(( $(date +%s) + 600 ))
 
-            echo "Certificate generated successfully."
+            echo "Attempting certificate generation on {{ .name }}..."
+
+            # Neither half of this check is optional. curl exits 0 on an HTTP
+            # 404, and on a cold boot nginx answers on 443 with "Page not
+            # found" for a while before eAPI is registered -- so the exit code
+            # alone would report success without ever having reached the
+            # device. --fail-with-body makes that a failure. The `"result"`
+            # test covers the other half: eAPI reports a *failed command*
+            # inside an HTTP 200, as an `error` member.
+            until out=$(post /tmp/cmds) && echo "$out" | grep -q '"result"' ; do
+              if [ "$(date +%s)" -ge "$deadline" ] ; then
+                echo "eAPI never became ready on {{ .name }}: $out"
+                exit 1
+              fi
+              echo "eAPI not ready yet, retrying..."
+              sleep 10
+            done
+
+            echo "Certificate generated. Verifying RESTCONF came up..."
+
+            # And the commands succeeding still does not mean RESTCONF is
+            # serving: the SSL profile is re-evaluated asynchronously, so ask
+            # the device until it says the server is enabled.
+            until out=$(post /tmp/verify) && echo "$out" | grep -q '"enabled":true' ; do
+              if [ "$(date +%s)" -ge "$deadline" ] ; then
+                echo "RESTCONF is not enabled on {{ .name }}: $out"
+                exit 1
+              fi
+              echo "RESTCONF not up yet, retrying..."
+              sleep 5
+            done
+
+            echo "RESTCONF is up on {{ .name }}."
 
 {{- end }}
 {{- end }}
