@@ -79,6 +79,7 @@ You can override these values in your own file.
 | `topology.nodes.image`   | Container images used for topology nodes.                    | `ghcr.io/nokia/srlinux:latest`<br>`quay.io/frrouting/frr:8.4.7`<br>`docker.io/library/ceos:4.35.0F`<br>`bash:latest` |
 | `topology.nodes.memory`  | Memory allocation per node type.                             | srlinux: `4Gi`<br>frr: `512Mi`<br>ceos: `4Gi`<br>linux: `200Mi` |
 | `topology.nodes.cpu`     | CPU allocation per node type.                                | srlinux: `2000m`<br>frr: `500m`<br>ceos: `2000m`<br>linux: `200m` |
+| `ceos.restconfSslProfile`| SSL profile for cEOS RESTCONF on port 6020.                  | `ARISTA_DEFAULT_SELF_SIGNED_PROFILE` |
 
 <br>
 
