@@ -11,13 +11,29 @@ data:
       protocol https
       no shutdown
     !
-    management security
-       ssl profile restconf
-       certificate restconf.crt key restconf.key
-    !
+    {{- /*
+    RESTCONF rides EOS's own self-signed profile, which the device generates
+    for itself -- so RESTCONF comes up from this file alone, with nothing for
+    the chart to generate and nothing to order. Verified from a cold boot: the
+    profile is already valid when this config is applied, which is the part
+    that matters, since EOS never revisits an "invalid" verdict on a profile.
+
+    Earlier releases pointed at a `restconf` profile whose certificate a Job
+    created after boot. That could not hold: this ConfigMap is the only thing
+    mounted into /mnt/flash, so the config survives a container restart while
+    the generated certificate -- written to the container's writable layer --
+    does not. The profile then referenced a file that no longer existed and
+    RESTCONF stayed down, with the Job long since Complete and never re-run.
+
+    Both certificates are self-signed, and neither carries a CN matching the
+    Service a client connects to -- so the generated one was no better placed
+    for a client that does verify, and cost a Job to obtain. For a certificate
+    that can actually be verified, configure a profile yourself and point
+    ceos.restconfSslProfile at it.
+    */}}
     management api restconf
        transport https test
-       ssl profile restconf
+       ssl profile {{ (.Values.ceos).restconfSslProfile | default "ARISTA_DEFAULT_SELF_SIGNED_PROFILE" }}
     !
     ip access-list custom-cp
        counters per-entry

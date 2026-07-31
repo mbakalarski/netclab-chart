@@ -1,3 +1,12 @@
+# cEOS-wide settings. These apply to every cEOS node, because the startup-config
+# is one ConfigMap shared by all of them rather than one per node.
+ceos:
+  # SSL profile backing RESTCONF on port 6020. The default is EOS's own
+  # self-signed profile, which the device generates for itself -- so RESTCONF
+  # needs nothing generated and nothing ordered. Point this at a profile you
+  # configure yourself if you need a certificate that can be verified.
+  restconfSslProfile: ARISTA_DEFAULT_SELF_SIGNED_PROFILE
+
 topology:
   default_network:
     name: b0
