@@ -37,4 +37,508 @@ entries:
     urls:
     - https://github.com/netclab/netclab-chart/releases/download/v0.5.11/netclab-0.5.11.tgz
     version: 0.5.11
-generated: "2026-07-31T09:45:10.209754021Z"
+  - apiVersion: v2
+    appVersion: 0.5.10
+    created: "2026-08-04T11:53:14.096387818Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 743212200dd4c7cf68dea70e9b1ef232d5dbdd110eaefb6ee8b214cbb9d8e26a
+    home: https://github.com/netclab
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/netclab
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/netclab/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.10/netclab-0.5.10.tgz
+    version: 0.5.10
+  - apiVersion: v2
+    appVersion: 0.5.9
+    created: "2026-08-04T11:53:13.282111023Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: c1484b353391ef926804a0deff775afcdd151513ba77cb5434cd97775701d2cd
+    home: https://github.com/netclab
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/netclab
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/netclab/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.9/netclab-0.5.9.tgz
+    version: 0.5.9
+  - apiVersion: v2
+    appVersion: 0.5.8
+    created: "2026-08-04T11:53:12.346873411Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: f4fd4bc1c677a501801b4eac2b4c5fc78a432b57442edbfbd89b3d6c1d05d063
+    home: https://github.com/netclab
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/netclab
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/netclab/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.8/netclab-0.5.8.tgz
+    version: 0.5.8
+  - apiVersion: v2
+    appVersion: 0.5.7
+    created: "2026-08-04T11:53:11.382082626Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 8c6ec6c5686d45b833739a6279ba1c568861e865e531f5c73cfc3ecb4bcf26f2
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.7/netclab-0.5.7.tgz
+    version: 0.5.7
+  - apiVersion: v2
+    appVersion: 0.5.6
+    created: "2026-08-04T11:53:10.471599887Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 7ca454d4047be93f44178f021882a5263e69d40213ade42f99238e76934d50e2
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.6/netclab-0.5.6.tgz
+    version: 0.5.6
+  - apiVersion: v2
+    appVersion: 0.5.5
+    created: "2026-08-04T11:53:09.554073456Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 135809ba63c5a9a5eb59a88a1dcfb0491c79e77618dd6837efd4f71261ad712f
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.5/netclab-0.5.5.tgz
+    version: 0.5.5
+  - apiVersion: v2
+    appVersion: 0.5.4
+    created: "2026-08-04T11:53:08.624647122Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 1a1059da722f90d7f3e66854fec4a8ee72ca6c9d70766e8d9821b269c8289a10
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.4/netclab-0.5.4.tgz
+    version: 0.5.4
+  - apiVersion: v2
+    appVersion: 0.5.3
+    created: "2026-08-04T11:53:07.726740472Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 76f74da0b26d6003d982801ca05c904af17110ea61d6aef3523ec25a86d23ace
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.3/netclab-0.5.3.tgz
+    version: 0.5.3
+  - apiVersion: v2
+    appVersion: 0.5.2
+    created: "2026-08-04T11:53:06.784549328Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: bf1be5dddf628ae2112ce97723bbed4c972eade215f87e747afa8b40524c0fc1
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.2/netclab-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
+    appVersion: 0.5.1
+    created: "2026-08-04T11:53:05.848225198Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 0909d58c4c6304d3ac0a7f1df91568762ec3104dff5fc89dcd51c9d62561bbce
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.5.1/netclab-0.5.1.tgz
+    version: 0.5.1
+  - apiVersion: v2
+    appVersion: 0.4.0
+    created: "2026-08-04T11:53:04.734063207Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: fbb6174ce7a5a69b258efa7b7146a402bb4ffd2742a3618f8cd625d7389a8bd4
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.4.0/netclab-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: 0.3.4
+    created: "2026-08-04T11:53:03.747278064Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: dbc59edcd2f1e6648ac1bdb8be2b59e46471670efcde5a68b2ef3885b38f5466
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.3.4/netclab-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
+    appVersion: 0.3.3
+    created: "2026-08-04T11:53:02.806419605Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: 36fa026318c24b20e3540f0ad6be2392aaf82ca26a6d0a45f5c6a77da6844d48
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.3.3/netclab-0.3.3.tgz
+    version: 0.3.3
+  - apiVersion: v2
+    appVersion: 0.3.2
+    created: "2026-08-04T11:53:01.520859679Z"
+    description: Helm chart to deploy a network lab on Kubernetes
+    digest: eb8b9410bfc9b0b5ffdd87be550145637551592989c677ad98cb912e479cf880
+    home: https://github.com/mbakalarski
+    keywords:
+    - kind
+    - kubernetes
+    - k8s
+    - multus-cni
+    - network
+    - lab
+    - container
+    - ixia-c
+    - srlinux
+    - simulation
+    - testbed
+    - frrouting
+    maintainers:
+    - name: M.Bakalarski
+      url: https://github.com/mbakalarski
+    name: netclab
+    sources:
+    - https://kind.sigs.k8s.io
+    - https://github.com/k8snetworkplumbingwg/multus-cni
+    - https://github.com/open-traffic-generator/ixia-c
+    - https://github.com/nokia/srlinux-container-image
+    - https://github.com/FRRouting/frr
+    - https://github.com/mbakalarski/netclab-chart
+    - https://github.com/mbakalarski/netclab
+    - https://github.com/mbakalarski/netclab-examples
+    type: application
+    urls:
+    - https://github.com/netclab/netclab-chart/releases/download/v0.3.2/netclab-0.3.2.tgz
+    version: 0.3.2
+generated: "2026-08-04T11:53:14.095717155Z"
